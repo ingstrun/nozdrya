@@ -8,6 +8,7 @@ local speedY = 0
 function love.load()
   grass = love.graphics.newImage("grass.png")
   Player = love.graphics.newImage("burger.png")
+  Player2 = love.graphics.newImage("burger2.png")
 end
 
 function love.draw()
