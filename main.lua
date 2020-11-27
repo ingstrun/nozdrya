@@ -1,6 +1,7 @@
 local playerX = 5
 local playerY = 17
 local accel = 300
+local run = 0
 
 local speedX = 0
 local speedY = 0
@@ -43,7 +44,11 @@ function love.draw()
   end
 
   --player
-  love.graphics.draw(Player,cellsize*playerX,cellsize*17)
+  if run==0 then  
+    love.graphics.draw(Player,cellsize*playerX,cellsize*17)
+  else 
+    love.graphics.draw(Player2,cellsize*playerX,cellsize*17)
+  end
 
   for i=0,10 do
    -- love.graphics.draw(grass, i*cellsize, cellsize * i)
@@ -56,9 +61,19 @@ end
 function love.keypressed( key )
   if key == "d" then
     playerX = playerX+1
+    if run==0 then 
+      run = run+1
+    else
+      run=run-1
+    end  
    -- playerY = love.mouse.getY()
   end
    if key == "a" then
     playerX = playerX-1
+    if run==0 then 
+      run = run+1
+    else
+      run=run-1
+    end  
   end
 end
