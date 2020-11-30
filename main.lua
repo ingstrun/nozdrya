@@ -2,14 +2,18 @@ local playerX = 5
 local playerY = 17
 local accel = 300
 local run = 0
+local grassing_l = 15
 
-local speedX = 0
-local speedY = 0
+local cellsize = 32
+local world_h = 40
+local world_w = 70
 
 function love.load()
   grass = love.graphics.newImage("grass.png")
   Player = love.graphics.newImage("burger.png")
   Player2 = love.graphics.newImage("burger2.png")
+  love.window.setTitle("Forager craft")
+  love.window.setMode(cellsize * world_w, cellsize * world_h)
 end
 
 function love.draw()
@@ -23,7 +27,6 @@ function love.draw()
   love.graphics.clear(red, green, blue, alpha)
   w = love.graphics.getWidth()   -- window width
   h = love.graphics.getHeight()  -- window height
-  cellsize = 32
   
   x = cellsize
   
@@ -37,17 +40,17 @@ function love.draw()
     love.graphics.line(0,y,w,y)
     y = y + cellsize
   end
-  
-  for i=0,32 do
-    love.graphics.draw(grass, i*cellsize, cellsize*18)
+  --grass
+  for i=0,world_w do
+    love.graphics.draw(grass, i*cellsize, cellsize*grassing_l)
 
   end
 
   --player
   if run==0 then  
-    love.graphics.draw(Player,cellsize*playerX,cellsize*17)
+    love.graphics.draw(Player,cellsize*playerX,cellsize*grassing_l-cellsize)
   else 
-    love.graphics.draw(Player2,cellsize*playerX,cellsize*17)
+    love.graphics.draw(Player2,cellsize*playerX,cellsize*grassing_l-cellsize)
   end
 
   for i=0,10 do
@@ -76,4 +79,12 @@ function love.keypressed( key )
       run=run-1
     end  
   end
+  
+  if key == "o" then
+    --grassing_l = grassing_l+1
+  end
+  
+  if key == "p" then
+    --grassing_l = grassing_l-1
+  end 
 end
