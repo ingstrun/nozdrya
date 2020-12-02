@@ -48,9 +48,7 @@ function love.draw()
   --grass
   for i=0,world_w do
     love.graphics.draw(grass, i*cellsize, cellsize * ground_level[i])
-    g = ground_level[i]
-    while g<world_h do
-      g=g+1
+    for g=ground_level[i]+1,world_h do
       love.graphics.draw(dirt, i*cellsize, cellsize * g)
     end
   end
@@ -99,5 +97,19 @@ function love.keypressed( key )
   
   if key == "p" then
     ground_level[playerX] = ground_level[playerX]-1
+  end 
+  if key == "f5" then
+    -- Opens a file in append mode
+    file = io.open("world.txt", "w")    
+    -- sets the default output file as test.lua
+    io.output(file)
+
+    for i = 0, world_w do
+      io.write(ground_level[i])
+      io.write("\n")
+    end
+
+    -- closes the open file
+    io.close(file)
   end 
 end
