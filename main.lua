@@ -3,7 +3,7 @@ local playerY = 17
 local accel = 300
 local run = 0
 local ground_level = {}
-
+local mob_run = 0
 local cellsize = 32
 local world_h = 40
 local world_w = 70
@@ -15,7 +15,8 @@ function love.load()
   Player2 = love.graphics.newImage("burger2.png")
   love.window.setTitle("Forager craft")
   love.window.setMode(cellsize * world_w, cellsize * world_h)
-
+  no = love.graphics.newImage("пустота.png")
+  wood = love.graphics.newImage("wood.png")
   for i=0, world_w do
     ground_level[i] = 15
   end
@@ -53,10 +54,6 @@ function love.draw()
     end
   end
   
-
-
-
-
   --player
   if run==0 then  
     love.graphics.draw(Player, cellsize*playerX, cellsize*ground_level[playerX] - cellsize)
@@ -98,6 +95,7 @@ function love.keypressed( key )
   if key == "p" then
     ground_level[playerX] = ground_level[playerX]-1
   end 
+  
   if key == "f5" then
     -- Opens a file in append mode
     file = io.open("world.txt", "w")    
@@ -112,4 +110,12 @@ function love.keypressed( key )
     -- closes the open file
     io.close(file)
   end 
+
+  if key == "f9" then
+    i = 0
+    for l in io.lines("world.txt") do
+      ground_level[i] = tonumber(l)
+      i = i+1
+    end
+  end
 end
