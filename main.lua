@@ -20,6 +20,8 @@ function love.load()
   for i=0, world_w do
     ground_level[i] = 15
   end
+  sound = love.audio.newSource("music.mp3", "stream")
+  love.audio.play(sound)
 end
 
 function love.draw()
