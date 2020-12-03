@@ -25,9 +25,9 @@ function love.load()
 end
 
 function love.draw()
-  red = 0.7
-  green = 0.7
-  blue = 0.7
+  red = 13/100
+  green = 68/100
+  blue = 96/100
   alpha = 0/100
 
   -- love.graphics.setBackgroundColor( red, green, blue, alpha)
@@ -69,6 +69,28 @@ function love.draw()
   -- love.graphics.draw(grass, love.mouse.getX(), love.mouse.getY( ))
   --love.graphics.draw(grass, cellsize, cellsize * 3)
   -- love.graphics.print("I like turtles", love.mouse.getX(), love.mouse.getY( ))
+
+  mouseXpx = love.mouse.getX()
+  mouseX = math.floor(mouseXpx / cellsize)
+  -- love.graphics.circle("fill", mouseX*cellsize + cellsize/2, 0, 10, 10)
+  x1 = mouseX*cellsize + cellsize/2
+  x2 = mouseX*cellsize + cellsize/2
+  y1=0
+  y2=cellsize*world_h
+  love.graphics.setColor(1, 0.5, 0.5)
+  love.graphics.line( x1, y1, x2, y2 )
+  love.graphics.setColor(1, 1, 1)
+end
+
+function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
+  -- x -- in pixels
+  -- button 1=left, 2=right
+  colnum = math.floor(mouseXpx / cellsize)
+  if button == 1 then 
+    ground_level[colnum] = ground_level[colnum]+1
+  else 
+    ground_level[colnum] = ground_level[colnum]-1
+  end
 end
 
 function love.keypressed( key )
