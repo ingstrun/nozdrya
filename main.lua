@@ -8,6 +8,25 @@ local cellsize = 32
 local world_h = 40
 local world_w = 70
 
+local start_time = love.timer.getTime()
+local last_set_ground = start_time - 1
+local offset = 0
+
+function set_ground_sinus(offset)
+  for i=0, world_w do
+    ground_level[i] = world_h/2 + math.floor(math.sin(4*(i+offset)*math.pi / world_w) * world_h/3 + 0.5)
+  end
+end
+
+function love.update(dt)
+  now = love.timer.getTime()
+  if now > last_set_ground + 0.1 then
+    offset = offset + 1
+    set_ground_sinus(offset)
+    last_set_ground = now
+  end
+end
+
 function love.load()
   dirt = love.graphics.newImage("dirt.png")
   grass = love.graphics.newImage("grass.png")
@@ -17,9 +36,7 @@ function love.load()
   love.window.setMode(cellsize * world_w, cellsize * world_h)
   no = love.graphics.newImage("пустота.png")
   wood = love.graphics.newImage("wood.png")
-  for i=0, world_w do
-    ground_level[i] = 15
-  end
+  set_ground_sinus(offset)
   sound = love.audio.newSource("music.mp3", "stream")
   love.audio.play(sound)
 end
