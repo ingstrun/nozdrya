@@ -16,7 +16,7 @@ local jump_stop = 0
 function set_ground_sinus(offset)
   math.randomseed(os.time())
   for i=0, world_w do
-    ground_level[i] = math.floor(4*math.random())+13
+    ground_level[i] = math.floor(15*math.random())+13
     --ground_level[i] = world_h/2
   end
 end
@@ -43,7 +43,7 @@ function love.load()
   set_ground_sinus(offset)
   music = love.audio.newSource("music.mp3", "stream")
   sound_bonk = love.audio.newSource("bonk.mp3", "static")
-  -- love.audio.play(music)
+  love.audio.play(music)
 end
 
 function love.draw()
@@ -169,5 +169,11 @@ function love.keypressed( key )
       ground_level[i] = tonumber(l)
       i = i+1
     end
+  end
+  if key == "h" then
+    for i=0,world_w do
+      ground_level[i] = world_h/2
+    end  
+  
   end
 end
