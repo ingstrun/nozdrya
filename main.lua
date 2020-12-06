@@ -7,23 +7,25 @@ local mob_run = 0
 local cellsize = 32
 local world_h = 40
 local world_w = 70
-
+local time_start_run = 0
 local start_time = love.timer.getTime()
 local last_set_ground = start_time - 1
 local offset = 0
+local jump_stop = 0
 
 function set_ground_sinus(offset)
   for i=0, world_w do
-    ground_level[i] = world_h/2 + math.floor(math.sin(4*(i+offset)*math.pi / world_w) * world_h/3 + 0.5)
+    ground_level[i] = world_h/2
   end
 end
 
 function love.update(dt)
   now = love.timer.getTime()
-  if now > last_set_ground + 0.1 then
-    offset = offset + 1
-    set_ground_sinus(offset)
+  if now > time_start_run + 0.5 then
+    -- offset = offset + 1
+    -- set_ground_sinus(offset)
     last_set_ground = now
+    run = 0
   end
 end
 
@@ -37,8 +39,9 @@ function love.load()
   no = love.graphics.newImage("пустота.png")
   wood = love.graphics.newImage("wood.png")
   set_ground_sinus(offset)
-  sound = love.audio.newSource("music.mp3", "stream")
-  love.audio.play(sound)
+  music = love.audio.newSource("music.mp3", "stream")
+  sound_bonk = love.audio.newSource("bonk.mp3", "static")
+  -- love.audio.play(music)
 end
 
 function love.draw()
@@ -71,6 +74,8 @@ function love.draw()
     for g=ground_level[i]+1,world_h do
       love.graphics.draw(dirt, i*cellsize, cellsize * g)
     end
+    -- love.graphics.print(ground_level[i], i*cellsize, world_h*cellsize)
+    love.graphics.print(ground_level[i], i*cellsize, (world_h-1)*cellsize)
   end
   
   --player
@@ -109,24 +114,28 @@ function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
     ground_level[colnum] = ground_level[colnum]-1
   end
 end
-
+  
 function love.keypressed( key )
   if key == "d" then
-    playerX = playerX+1
-    if run==0 then 
-      run = run+1
+    if ground_level[playerX]>ground_level[playerX+1]+2 then
+      sound_bonk:stop()
+      sound_bonk:play()
     else
-      run=run-1
-    end  
-   -- playerY = love.mouse.getY()
+      playerX = playerX+1
+      run = 1
+      time_start_run = love.timer.getTime()
+    end
   end
-   if key == "a" then
-    playerX = playerX-1
-    if run==0 then 
-      run = run+1
+  
+  if key == "a" then
+    if ground_level[playerX]>ground_level[playerX-1]+2 then
+      sound_bonk:stop()
+      sound_bonk:play()
     else
-      run=run-1
-    end  
+      playerX = playerX-1
+      run = 1
+      time_start_run = love.timer.getTime()
+    end
   end
   
   if key == "o" then
