@@ -14,8 +14,10 @@ local offset = 0
 local jump_stop = 0
 
 function set_ground_sinus(offset)
+  math.randomseed(os.time())
   for i=0, world_w do
-    ground_level[i] = world_h/2
+    ground_level[i] = math.floor(4*math.random())+13
+    --ground_level[i] = world_h/2
   end
 end
 
