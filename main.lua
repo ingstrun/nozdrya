@@ -16,7 +16,7 @@ local jump_stop = 0
 function set_ground_sinus(offset)
   math.randomseed(os.time())
   for i=0, world_w do
-    ground_level[i] = math.floor(15*math.random())+13
+    ground_level[i] = math.floor(6*math.random())+13
     --ground_level[i] = world_h/2
   end
 end
@@ -86,6 +86,13 @@ function love.draw()
   else 
     love.graphics.draw(Player2, cellsize*playerX, cellsize*ground_level[playerX] - cellsize)
   end
+  
+  -- над головой у человечка
+  love.graphics.print(ground_level[playerX], cellsize*playerX, cellsize* (ground_level[playerX]-2) )
+  
+  love.graphics.print(ground_level[playerX-1], cellsize*(playerX-1), cellsize* (ground_level[playerX]-2) )
+  
+  love.graphics.print(ground_level[playerX+1], cellsize*(playerX+1), cellsize* (ground_level[playerX]-2) )
 
   for i=0,10 do
    -- love.graphics.draw(grass, i*cellsize, cellsize * i)
