@@ -38,7 +38,7 @@ function love.load()
   Player = love.graphics.newImage("burger.png")
   Player2 = love.graphics.newImage("burger2.png")
   stone=love.graphics.newImage("stone.png")
-  love.window.setTitle("Forager craft")
+  love.window.setTitle("Ноздря")
   love.window.setMode(cellsize * world_w, cellsize * world_h)
   no = love.graphics.newImage("пустота.png")
   wood = love.graphics.newImage("wood.png")
@@ -47,6 +47,7 @@ function love.load()
   music = love.audio.newSource("music.mp3", "stream")
   sound_bonk = love.audio.newSource("bonk.mp3", "static")
   love.audio.play(music)
+  rip = love.graphics.newImage("tomb.png")
 end
 
 function love.draw()
@@ -74,11 +75,12 @@ function love.draw()
     love.graphics.line(0,y,w,y)
     y = y + cellsize
   end
-  --heart
+  --Жижа
   for hit=1,hitpoints do
     love.graphics.draw(heart,cellsize*hit,cellsize*2)
   end
-
+  --?
+  
   --grass
   for i=0,world_w do
     love.graphics.draw(grass, i*cellsize, cellsize * ground_level[i])
@@ -94,7 +96,9 @@ function love.draw()
   end
   
   --player
-  if run==0 then  
+  if hitpoints<1 then
+    love.graphics.draw(rip, cellsize*playerX, cellsize*ground_level[playerX] - cellsize)
+  elseif run==0 then    
     love.graphics.draw(Player, cellsize*playerX, cellsize*ground_level[playerX] - cellsize)
   else 
     love.graphics.draw(Player2, cellsize*playerX, cellsize*ground_level[playerX] - cellsize)
@@ -104,10 +108,10 @@ function love.draw()
   love.graphics.print(ground_level[playerX], cellsize*playerX, cellsize* (ground_level[playerX]-2) )
   
   if playerX-0>0 then
-    love.graphics.print(ground_level[playerX-1], cellsize*(playerX-1), cellsize* (ground_level[playerX]-2) )
+    love.graphics.print(ground_level[playerX-1]-ground_level[playerX], cellsize*(playerX-1), cellsize* (ground_level[playerX]-2) )
   end
   
-  love.graphics.print(ground_level[playerX+1], cellsize*(playerX+1), cellsize* (ground_level[playerX]-2) )
+  love.graphics.print(ground_level[playerX+1]-ground_level[playerX], cellsize*(playerX+1), cellsize* (ground_level[playerX]-2) )
 
   for i=0,10 do
    -- love.graphics.draw(grass, i*cellsize, cellsize * i)
@@ -145,17 +149,28 @@ function love.keypressed( key )
       sound_bonk:stop()
       sound_bonk:play()
     else
+      if ground_level[playerX+1]-ground_level[playerX]>3 then
+        hitpoints = hitpoints-1
+      end
+
       playerX = playerX+1
       run = 1
       time_start_run = love.timer.getTime()
     end
+    if ground_level[playerX+1]-ground_level[playerX]>3 then
+      hitpoints = hitpoints-1
+    end
   end
+
   
   if key == "a" then
     if playerX-1==-1 or ground_level[playerX]>ground_level[playerX-1]+2 then
       sound_bonk:stop()
       sound_bonk:play()
     else
+      if ground_level[playerX-1]-ground_level[playerX]>3 then
+        hitpoints = hitpoints-1
+      end
       playerX = playerX-1
       run = 1
       time_start_run = love.timer.getTime()
