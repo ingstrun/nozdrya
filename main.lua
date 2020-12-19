@@ -13,6 +13,7 @@ local last_set_ground = start_time - 1
 local offset = 0
 local jump_stop = 0
 local hitpoints = 10
+local game_over = false
 
 function set_ground_sinus(offset)
   math.randomseed(os.time())
@@ -23,6 +24,9 @@ function set_ground_sinus(offset)
 end
 
 function love.update(dt)
+  if hitpoints<1 then
+    gameover=true
+  end
   now = love.timer.getTime()
   if now > time_start_run + 0.5 then
     -- offset = offset + 1
@@ -48,6 +52,10 @@ function love.load()
   sound_bonk = love.audio.newSource("bonk.mp3", "static")
   love.audio.play(music)
   rip = love.graphics.newImage("tomb.png")
+  die = love.graphics.newImage("gameover.png")
+  sound_oof = love.audio.newSource("oof.mp3", "static")
+  stone_grass = love.graphics.newImage("stone_grass.png")
+  rip_stone = love.graphics.newImage("tomb_cave.png")
 end
 
 function love.draw()
@@ -63,7 +71,7 @@ function love.draw()
   h = love.graphics.getHeight()  -- window height
   
   x = cellsize
-  --|||
+  --[[|||
   while x < w do
     love.graphics.line(x, 0, x, h)
     x = x + cellsize
@@ -75,6 +83,8 @@ function love.draw()
     love.graphics.line(0,y,w,y)
     y = y + cellsize
   end
+  --]]
+
   --Жижа
   for hit=1,hitpoints do
     love.graphics.draw(heart,cellsize*hit,cellsize*2)
@@ -83,7 +93,13 @@ function love.draw()
   
   --grass
   for i=0,world_w do
-    love.graphics.draw(grass, i*cellsize, cellsize * ground_level[i])
+    if ground_level[i]<30 then
+      love.graphics.draw(grass, i*cellsize, cellsize * ground_level[i])
+    else
+      love.graphics.draw(stone_grass, i*cellsize, cellsize * ground_level[i])
+    end
+    
+    -- zemlya
     for g=ground_level[i]+1,world_h do
       if g<30 then
         love.graphics.draw(dirt, i*cellsize, cellsize * g)
@@ -91,13 +107,18 @@ function love.draw()
         love.graphics.draw(stone, i*cellsize, cellsize * g)
       end
     end
-    -- love.graphics.print(ground_level[i], i*cellsize, world_h*cellsize)
+    -- cifry snizu
     love.graphics.print(ground_level[i], i*cellsize, (world_h-1)*cellsize)
   end
   
   --player
   if hitpoints<1 then
-    love.graphics.draw(rip, cellsize*playerX, cellsize*ground_level[playerX] - cellsize)
+    -- dead
+    if ground_level[playerX]<30 then
+      love.graphics.draw(rip, cellsize*playerX, cellsize*ground_level[playerX] - cellsize)
+    else
+      love.graphics.draw(rip_stone, cellsize*playerX, cellsize*ground_level[playerX] - cellsize)
+    end
   elseif run==0 then    
     love.graphics.draw(Player, cellsize*playerX, cellsize*ground_level[playerX] - cellsize)
   else 
@@ -130,6 +151,10 @@ function love.draw()
   love.graphics.setColor(1, 0.5, 0.5)
   love.graphics.line( x1, y1, x2, y2 )
   love.graphics.setColor(1, 1, 1)
+
+  if gameover then
+     love.graphics.draw(die,world_w*32/2-die:getWidth()/2,world_h*32/2-die:getHeight()/2-100)
+  end
 end
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
@@ -143,23 +168,35 @@ function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
   end
 end
   
-function love.keypressed( key )
+function love.keypressed( key ) 
+  if key == "f9" then
+    i = 0
+    for l in io.lines("world.txt") do
+      ground_level[i] = tonumber(l)
+      i = i+1
+    end
+  end
+
+  if gameover then
+    return
+  end
+
   if key == "d" then
     if ground_level[playerX]>ground_level[playerX+1]+2 or playerX+1==world_w then
       sound_bonk:stop()
       sound_bonk:play()
     else
       if ground_level[playerX+1]-ground_level[playerX]>3 then
-        hitpoints = hitpoints-1
+        hitpoints = hitpoints-1 
+        sound_oof:stop()
+        sound_oof:play()
       end
 
       playerX = playerX+1
       run = 1
       time_start_run = love.timer.getTime()
     end
-    if ground_level[playerX+1]-ground_level[playerX]>3 then
-      hitpoints = hitpoints-1
-    end
+  
   end
 
   
@@ -170,6 +207,7 @@ function love.keypressed( key )
     else
       if ground_level[playerX-1]-ground_level[playerX]>3 then
         hitpoints = hitpoints-1
+        sound_oof:play()
       end
       playerX = playerX-1
       run = 1
@@ -200,13 +238,6 @@ function love.keypressed( key )
     io.close(file)
   end 
 
-  if key == "f9" then
-    i = 0
-    for l in io.lines("world.txt") do
-      ground_level[i] = tonumber(l)
-      i = i+1
-    end
-  end
   if key == "h" then
     for i=0,world_w do
       ground_level[i] = world_h/2
