@@ -85,11 +85,6 @@ function love.draw()
   end
   --]]
 
-  --Жижа
-  for hit=1,hitpoints do
-    love.graphics.draw(heart,cellsize*hit,cellsize*2)
-  end
-  --?
   
   --grass
   for i=0,world_w do
@@ -110,6 +105,11 @@ function love.draw()
     -- cifry snizu
     love.graphics.print(ground_level[i], i*cellsize, (world_h-1)*cellsize)
   end
+  --Жижа
+  for hit=1,hitpoints do
+    love.graphics.draw(heart,cellsize*hit,cellsize*2)
+  end
+  --?
   
   --player
   if hitpoints<1 then
@@ -170,11 +170,18 @@ end
   
 function love.keypressed( key ) 
   if key == "f9" then
+    file = io.open("world.txt", "r")
+    -- sets the default output file as test.lua
+    io.input(file)
     i = 0
-    for l in io.lines("world.txt") do
-      ground_level[i] = tonumber(l)
-      i = i+1
+    playerX = io.read("*number")
+    hitpoints = io.read("*number")
+    
+    for i = 0, world_w-1 do
+      ground_level[i] = io.read("*number")
     end
+   
+    io.close(file)
   end
 
   if gameover then
@@ -191,7 +198,7 @@ function love.keypressed( key )
         sound_oof:stop()
         sound_oof:play()
       end
-
+ 
       playerX = playerX+1
       run = 1
       time_start_run = love.timer.getTime()
@@ -228,12 +235,15 @@ function love.keypressed( key )
     file = io.open("world.txt", "w")    
     -- sets the default output file as test.lua
     io.output(file)
-
+    io.write(playerX)
+    io.write("\n")
+    io.write(hitpoints)
+    io.write("\n")
     for i = 0, world_w do
-      io.write(ground_level[i])
+      io.write(ground_level[i]-1)
       io.write("\n")
     end
-
+    
     -- closes the open file
     io.close(file)
   end 
