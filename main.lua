@@ -239,8 +239,8 @@ function love.keypressed( key )
     io.write("\n")
     io.write(hitpoints)
     io.write("\n")
-    for i = 0, world_w do
-      io.write(ground_level[i]-1)
+    for i = 0, world_w-1 do
+      io.write(ground_level[i])
       io.write("\n")
     end
     
