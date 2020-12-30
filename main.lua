@@ -1,7 +1,6 @@
 local playerX = 5
 local playerY = 5
-local cowX = 5
-local cowY = 5
+local cow = {x = 5, y = 5}
 local accel = 300
 local run = 0
 local ground_level = {}
@@ -58,7 +57,7 @@ function love.load()
   sound_oof = love.audio.newSource("oof.mp3", "static")
   stone_grass = love.graphics.newImage("stone_grass.png")
   rip_stone = love.graphics.newImage("tomb_cave.png")
-  cow = love.graphics.newImage("cow.png")
+  cow["sprite"] = love.graphics.newImage("cow.png")
 end
 
 function love.draw()
@@ -113,7 +112,7 @@ function love.draw()
     love.graphics.draw(heart,cellsize*hit,cellsize*2)
   end
   --cow
-  love.graphics.draw(cow,cellsize*cowX,cellsize*cowY)
+  love.graphics.draw(cow.sprite,cellsize*cow.x,cellsize*cow.y)
   --player
   if hitpoints<1 then
     -- dead
