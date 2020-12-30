@@ -15,11 +15,13 @@ local offset = 0
 local jump_stop = 0
 local hitpoints = 10
 local game_over = false
-
+local game_seconds = 0
+local last_tick = 0
+--6
 function set_ground_sinus(offset)
   math.randomseed(os.time())
   for i=0, world_w do
-    ground_level[i] = math.floor(6*math.random())+13
+    ground_level[i] = math.floor(30*math.random())+13
     --ground_level[i] = world_h/2
   end
 end
@@ -28,6 +30,15 @@ function love.update(dt)
   if hitpoints<1 then
     gameover=true
   end
+  
+  game_seconds = game_seconds + dt
+  if game_seconds > last_tick + 0.1 then
+    -- tick
+    cow.x = cow.x + 1
+
+    last_tick = game_seconds
+  end
+
   now = love.timer.getTime()
   if now > time_start_run + 0.5 then
     -- offset = offset + 1
@@ -163,8 +174,11 @@ function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
   -- x -- in pixels
   -- button 1=left, 2=right
   colnum = math.floor(mouseXpx / cellsize)
+  rownum = math.floor(mouseYpx / cellsize)
   if button == 1 then 
     ground_level[colnum] = ground_level[colnum]+1
+    cow.x = colnum
+    cow.y = rownum
   else 
     ground_level[colnum] = ground_level[colnum]-1
   end
