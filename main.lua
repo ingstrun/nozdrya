@@ -113,7 +113,7 @@ function love.draw()
     love.graphics.draw(heart,cellsize*hit,cellsize*2)
   end
   --cow
-  --love.graphics.draw(cow,cellsize*cowX,cellsize*cowY)
+  love.graphics.draw(cow,cellsize*cowX,cellsize*cowY)
   --player
   if hitpoints<1 then
     -- dead
