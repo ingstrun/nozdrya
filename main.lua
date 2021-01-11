@@ -17,6 +17,8 @@ local hitpoints = 10
 local game_over = false
 local game_seconds = 0
 local last_tick = 0
+local sprite = {}
+
 --горнасть
 function set_ground_sinus(offset)
   math.randomseed(os.time())
@@ -72,7 +74,8 @@ function love.load()
   sound_oof = love.audio.newSource("oof.mp3", "static")
   stone_grass = love.graphics.newImage("stone_grass.png")
   rip_stone = love.graphics.newImage("tomb_cave.png")
-  cow["sprite"] = love.graphics.newImage("cow.png")
+  sprite["cow"] = love.graphics.newImage("cow.png")
+  sprite["bricks"] = love.graphics.newImage("bricks.png")
 end
 
 function love.draw()
@@ -116,6 +119,7 @@ function love.draw()
       willdraw = dirt
       if i > 60 then
         willdraw = stone
+        willdraw = sprite.bricks
       end 
       love.graphics.draw(willdraw, i*cellsize, cellsize * g)
     end
@@ -127,7 +131,7 @@ function love.draw()
     love.graphics.draw(heart,cellsize*hit,cellsize*2)
   end
   --cow
-  love.graphics.draw(cow.sprite,cellsize*cow.x,cellsize*cow.y)
+  love.graphics.draw(sprite.cow,cellsize*cow.x,cellsize*cow.y)
   --player
   if hitpoints<1 then
     -- dead
