@@ -17,15 +17,19 @@ local hitpoints = 10
 local game_over = false
 local game_seconds = 0
 local last_tick = 0
---6
+--горнасть
 function set_ground_sinus(offset)
   math.randomseed(os.time())
-  for i=0, world_w do
-    ground_level[i] = math.floor(30*math.random())+13
+  for i=0, world_w-10 do
+    ground_level[i] = math.floor(5*math.random())+13
     --ground_level[i] = world_h/2
   end
-end
 
+  --stone
+  for i=60, world_w do
+    ground_level[i] = math.floor(-12*math.random())+13
+  end
+end
 function love.update(dt)
   if hitpoints<1 then
     gameover=true
@@ -109,11 +113,11 @@ function love.draw()
     
     -- zemlya
     for g=ground_level[i]+1,world_h do
-      if g<30 then
-        love.graphics.draw(dirt, i*cellsize, cellsize * g)
-      else
-        love.graphics.draw(stone, i*cellsize, cellsize * g)
-      end
+      willdraw = dirt
+      if i > 60 then
+        willdraw = stone
+      end 
+      love.graphics.draw(willdraw, i*cellsize, cellsize * g)
     end
     -- cifry snizu
     love.graphics.print(ground_level[i], i*cellsize, (world_h-1)*cellsize)
