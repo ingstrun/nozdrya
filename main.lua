@@ -119,7 +119,7 @@ function love.draw()
       willdraw = dirt
       if i > 60 then
         willdraw = stone
-        willdraw = sprite.bricks
+        -- willdraw = sprite.bricks
       end 
       love.graphics.draw(willdraw, i*cellsize, cellsize * g)
     end
