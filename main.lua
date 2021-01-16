@@ -18,10 +18,19 @@ local game_over = false
 local game_seconds = 0
 local last_tick = 0
 local sprite = {}
+local world = {}
 
 --горнасть
-function set_ground_sinus(offset)
+function init_world()
   math.randomseed(os.time())
+
+  for x = 0, world_w do
+    world[x] = {}
+    for y = 0, world_h do
+      world[x][y] = 0
+    end
+  end
+
   for i=0, world_w-10 do
     ground_level[i] = math.floor(5*math.random())+13
     --ground_level[i] = world_h/2
@@ -32,6 +41,7 @@ function set_ground_sinus(offset)
     ground_level[i] = math.floor(-12*math.random())+13
   end
 end
+
 function love.update(dt)
   if hitpoints<1 then
     gameover=true
@@ -47,8 +57,6 @@ function love.update(dt)
 
   now = love.timer.getTime()
   if now > time_start_run + 0.5 then
-    -- offset = offset + 1
-    -- set_ground_sinus(offset)
     last_set_ground = now
     run = 0
   end
@@ -65,7 +73,7 @@ function love.load()
   no = love.graphics.newImage("пустота.png")
   wood = love.graphics.newImage("wood.png")
   heart = love.graphics.newImage("heart.png")
-  set_ground_sinus(offset)
+  init_world()
   music = love.audio.newSource("music.mp3", "stream")
   sound_bonk = love.audio.newSource("bonk.mp3", "static")
   love.audio.play(music)
@@ -104,7 +112,6 @@ function love.draw()
     y = y + cellsize
   end
   --]]
-
   
   --grass
   for i=0,world_w do
@@ -130,8 +137,10 @@ function love.draw()
   for hit=1,hitpoints do
     love.graphics.draw(heart,cellsize*hit,cellsize*2)
   end
+  
   --cow
   love.graphics.draw(sprite.cow,cellsize*cow.x,cellsize*cow.y)
+  
   --player
   if hitpoints<1 then
     -- dead
@@ -155,13 +164,6 @@ function love.draw()
   
   love.graphics.print(ground_level[playerX+1]-ground_level[playerX], cellsize*(playerX+1), cellsize* (ground_level[playerX]-2) )
 
-  for i=0,10 do
-   -- love.graphics.draw(grass, i*cellsize, cellsize * i)
-  end
-  -- love.graphics.draw(grass, love.mouse.getX(), love.mouse.getY( ))
-  --love.graphics.draw(grass, cellsize, cellsize * 3)
-  --love.graphics.print("I like turtles", love.mouse.getX(), love.mouse.getY( ))
-
   mouseXpx = love.mouse.getX()
   mouseX = math.floor(mouseXpx / cellsize)
   -- love.graphics.circle("fill", mouseX*cellsize + cellsize/2, 0, 10, 10)
@@ -176,6 +178,13 @@ function love.draw()
   if gameover then
      love.graphics.draw(die,world_w*32/2-die:getWidth()/2,world_h*32/2-die:getHeight()/2-100)
   end
+  
+  for x = 0, world_w do
+    for y = 0, world_h do
+      love.graphics.print(world[x][y], cellsize*x, cellsize*y)
+    end
+  end
+
 end
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
@@ -185,10 +194,12 @@ function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
   rownum = math.floor(mouseYpx / cellsize)
   if button == 1 then 
     ground_level[colnum] = ground_level[colnum]+1
+    world[colnum][rownum] = world[colnum][rownum] + 1
     cow.x = colnum
     cow.y = rownum
   else 
     ground_level[colnum] = ground_level[colnum]-1
+    world[colnum][rownum] = world[colnum][rownum] - 1
   end
 end
   
