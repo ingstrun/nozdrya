@@ -99,19 +99,7 @@ function love.draw()
   --cow
   love.graphics.draw(sprite.cow,cellsize*cow.x,cellsize*cow.y)
   
-  --player
-  if hitpoints<1 then
-    -- dead
-    if playerY<30 then
-      love.graphics.draw(rip, cellsize*playerX, cellsize*playerY - cellsize)
-    else
-      love.graphics.draw(rip_stone, cellsize*playerX, cellsize*playerY - cellsize)
-    end
-  elseif run==0 then    
-    love.graphics.draw(Player, cellsize*playerX, cellsize*playerY - cellsize)
-  else 
-    love.graphics.draw(Player2, cellsize*playerX, cellsize*playerY - cellsize)
-  end
+  
   
   mouseXpx = love.mouse.getX()
   mouseX = math.floor(mouseXpx / cellsize)
@@ -132,11 +120,35 @@ function love.draw()
       if world[x][y] == 1 then
         sprite_to_draw = grass
       end
+      if world[x][y] == 2 then
+        sprite_to_draw = dirt
+      end
+      if world[x][y] == 3 then
+        sprite_to_draw = stone
+      end
+      if world[x][y] == 4 then
+        sprite_to_draw = sprite["bricks"]
+      end 
+      if world[x][y] == 5 then
+        sprite_to_draw = wood
+      end
       love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
       love.graphics.print(world[x][y], cellsize*x, cellsize*y)
     end
   end
-
+  --player
+  if hitpoints<1 then
+    -- dead
+    if playerY<30 then
+      love.graphics.draw(rip, cellsize*playerX, cellsize*playerY - cellsize)
+    else
+      love.graphics.draw(rip_stone, cellsize*playerX, cellsize*playerY - cellsize)
+    end
+  elseif run==0 then    
+    love.graphics.draw(Player, cellsize*playerX, cellsize*playerY - cellsize)
+  else 
+    love.graphics.draw(Player2, cellsize*playerX, cellsize*playerY - cellsize)
+  end
 end
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
@@ -144,13 +156,19 @@ function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
   -- button 1=left, 2=right
   colnum = math.floor(mouseXpx / cellsize)
   rownum = math.floor(mouseYpx / cellsize)
+  
   if button == 1 then 
     world[colnum][rownum] = world[colnum][rownum] + 1
     cow.x = colnum
     cow.y = rownum
   else 
-    world[colnum][rownum] = world[colnum][rownum] - 1
+    if world[colnum][rownum] > 0 then
+      world[colnum][rownum] = world[colnum][rownum] - 1
+    end  
   end
+  if world[colnum][rownum] > 5 then
+    world[colnum][rownum] = world[colnum][rownum] - 1
+  end  
 end
   
 function love.keypressed( key ) 
@@ -184,7 +202,17 @@ function love.keypressed( key )
     run = 1
     time_start_run = love.timer.getTime()
   end
-  
+  if key == "w" then
+    playerY = playerY-1
+    run = 1
+    time_start_run = love.timer.getTime()
+  end
+  if key == "s" then
+    playerY = playerY+1
+    run = 1
+    time_start_run = love.timer.getTime()
+  end
+
   if key == "f5" then
     -- Opens a file in append mode
     file = io.open("world.txt", "w")    
