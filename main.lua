@@ -3,7 +3,6 @@ local playerY = 5
 local cow = {x = 5, y = 5}
 local accel = 300
 local run = 0
-local ground_level = {}
 local mob_run = 0
 local cellsize = 32
 local world_h = 40
@@ -30,16 +29,6 @@ function init_world()
       world[x][y] = 0
     end
   end
-
-  for i=0, world_w-10 do
-    ground_level[i] = math.floor(5*math.random())+13
-    --ground_level[i] = world_h/2
-  end
-
-  --stone
-  for i=60, world_w do
-    ground_level[i] = math.floor(-12*math.random())+13
-  end
 end
 
 function love.update(dt)
@@ -63,27 +52,29 @@ function love.update(dt)
 end
 
 function love.load()
+  init_world()
+  love.window.setTitle("Ноздря")
+  love.window.setMode(cellsize * world_w, cellsize * world_h)
+  
   dirt = love.graphics.newImage("dirt.png")
   grass = love.graphics.newImage("grass.png")
   Player = love.graphics.newImage("burger.png")
   Player2 = love.graphics.newImage("burger2.png")
   stone=love.graphics.newImage("stone.png")
-  love.window.setTitle("Ноздря")
-  love.window.setMode(cellsize * world_w, cellsize * world_h)
   no = love.graphics.newImage("пустота.png")
   wood = love.graphics.newImage("wood.png")
   heart = love.graphics.newImage("heart.png")
-  init_world()
-  music = love.audio.newSource("music.mp3", "stream")
-  sound_bonk = love.audio.newSource("bonk.mp3", "static")
-  love.audio.play(music)
   rip = love.graphics.newImage("tomb.png")
   die = love.graphics.newImage("gameover.png")
-  sound_oof = love.audio.newSource("oof.mp3", "static")
   stone_grass = love.graphics.newImage("stone_grass.png")
   rip_stone = love.graphics.newImage("tomb_cave.png")
   sprite["cow"] = love.graphics.newImage("cow.png")
   sprite["bricks"] = love.graphics.newImage("bricks.png")
+
+  sound_bonk = love.audio.newSource("bonk.mp3", "static")
+  sound_oof = love.audio.newSource("oof.mp3", "static")
+  music = love.audio.newSource("music.mp3", "stream")
+  love.audio.play(music)
 end
 
 function love.draw()
@@ -99,88 +90,49 @@ function love.draw()
   h = love.graphics.getHeight()  -- window height
   
   x = cellsize
-  --[[|||
-  while x < w do
-    love.graphics.line(x, 0, x, h)
-    x = x + cellsize
-  end
-  y = cellsize
   
-  -- ___
-  while y < h do
-    love.graphics.line(0,y,w,y)
-    y = y + cellsize
-  end
-  --]]
-  
-  --grass
-  for i=0,world_w do
-    if ground_level[i]<30 then
-      love.graphics.draw(grass, i*cellsize, cellsize * ground_level[i])
-    else
-      love.graphics.draw(stone_grass, i*cellsize, cellsize * ground_level[i])
-    end
-    
-    -- zemlya
-    for g=ground_level[i]+1,world_h do
-      willdraw = dirt
-      if i > 60 then
-        willdraw = stone
-        -- willdraw = sprite.bricks
-      end 
-      love.graphics.draw(willdraw, i*cellsize, cellsize * g)
-    end
-    -- cifry snizu
-    love.graphics.print(ground_level[i], i*cellsize, (world_h-1)*cellsize)
-  end
   --Жижа
   for hit=1,hitpoints do
     love.graphics.draw(heart,cellsize*hit,cellsize*2)
   end
-  
+ 
   --cow
   love.graphics.draw(sprite.cow,cellsize*cow.x,cellsize*cow.y)
   
   --player
   if hitpoints<1 then
     -- dead
-    if ground_level[playerX]<30 then
-      love.graphics.draw(rip, cellsize*playerX, cellsize*ground_level[playerX] - cellsize)
+    if playerY<30 then
+      love.graphics.draw(rip, cellsize*playerX, cellsize*playerY - cellsize)
     else
-      love.graphics.draw(rip_stone, cellsize*playerX, cellsize*ground_level[playerX] - cellsize)
+      love.graphics.draw(rip_stone, cellsize*playerX, cellsize*playerY - cellsize)
     end
   elseif run==0 then    
-    love.graphics.draw(Player, cellsize*playerX, cellsize*ground_level[playerX] - cellsize)
+    love.graphics.draw(Player, cellsize*playerX, cellsize*playerY - cellsize)
   else 
-    love.graphics.draw(Player2, cellsize*playerX, cellsize*ground_level[playerX] - cellsize)
+    love.graphics.draw(Player2, cellsize*playerX, cellsize*playerY - cellsize)
   end
   
-  -- над головой у человечка
-  love.graphics.print(ground_level[playerX], cellsize*playerX, cellsize* (ground_level[playerX]-2) )
-  
-  if playerX-0>0 then
-    love.graphics.print(ground_level[playerX-1]-ground_level[playerX], cellsize*(playerX-1), cellsize* (ground_level[playerX]-2) )
-  end
-  
-  love.graphics.print(ground_level[playerX+1]-ground_level[playerX], cellsize*(playerX+1), cellsize* (ground_level[playerX]-2) )
-
   mouseXpx = love.mouse.getX()
   mouseX = math.floor(mouseXpx / cellsize)
-  -- love.graphics.circle("fill", mouseX*cellsize + cellsize/2, 0, 10, 10)
-  x1 = mouseX*cellsize + cellsize/2
-  x2 = mouseX*cellsize + cellsize/2
-  y1=0
-  y2=cellsize*world_h
+  mouseYpx = love.mouse.getY()
+  mouseY = math.floor(mouseYpx / cellsize)
   love.graphics.setColor(1, 0.5, 0.5)
-  love.graphics.line( x1, y1, x2, y2 )
+  love.graphics.rectangle("line", mouseX*cellsize, mouseY*cellsize, cellsize, cellsize )
   love.graphics.setColor(1, 1, 1)
 
   if gameover then
      love.graphics.draw(die,world_w*32/2-die:getWidth()/2,world_h*32/2-die:getHeight()/2-100)
   end
   
+  -- 2d world
   for x = 0, world_w do
     for y = 0, world_h do
+      sprite_to_draw = no
+      if world[x][y] == 1 then
+        sprite_to_draw = grass
+      end
+      love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
       love.graphics.print(world[x][y], cellsize*x, cellsize*y)
     end
   end
@@ -193,12 +145,10 @@ function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
   colnum = math.floor(mouseXpx / cellsize)
   rownum = math.floor(mouseYpx / cellsize)
   if button == 1 then 
-    ground_level[colnum] = ground_level[colnum]+1
     world[colnum][rownum] = world[colnum][rownum] + 1
     cow.x = colnum
     cow.y = rownum
   else 
-    ground_level[colnum] = ground_level[colnum]-1
     world[colnum][rownum] = world[colnum][rownum] - 1
   end
 end
@@ -224,46 +174,16 @@ function love.keypressed( key )
   end
 
   if key == "d" then
-    if ground_level[playerX]>ground_level[playerX+1]+2 or playerX+1==world_w then
-      sound_bonk:stop()
-      sound_bonk:play()
-    else
-      if ground_level[playerX+1]-ground_level[playerX]>3 then
-        hitpoints = hitpoints-1 
-        sound_oof:stop()
-        sound_oof:play()
-      end
- 
-      playerX = playerX+1
-      run = 1
-      time_start_run = love.timer.getTime()
-    end
-  
+    playerX = playerX+1
+    run = 1
+    time_start_run = love.timer.getTime()
   end
-
   
   if key == "a" then
-    if playerX-1==-1 or ground_level[playerX]>ground_level[playerX-1]+2 then
-      sound_bonk:stop()
-      sound_bonk:play()
-    else
-      if ground_level[playerX-1]-ground_level[playerX]>3 then
-        hitpoints = hitpoints-1
-        sound_oof:play()
-      end
-      playerX = playerX-1
-      run = 1
-      time_start_run = love.timer.getTime()
-    end
+    playerX = playerX-1
+    run = 1
+    time_start_run = love.timer.getTime()
   end
-  
-  if key == "o" then
-    ground_level[playerX] = ground_level[playerX]+1
-  end
-  
-  if key == "p" then
-    ground_level[playerX] = ground_level[playerX]-1
-  end 
   
   if key == "f5" then
     -- Opens a file in append mode
@@ -282,11 +202,4 @@ function love.keypressed( key )
     -- closes the open file
     io.close(file)
   end 
-
-  if key == "h" then
-    for i=0,world_w do
-      ground_level[i] = world_h/2
-    end  
-  
-  end
 end
