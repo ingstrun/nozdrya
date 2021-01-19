@@ -99,8 +99,6 @@ function love.draw()
   --cow
   love.graphics.draw(sprite.cow,cellsize*cow.x,cellsize*cow.y)
   
-  
-  
   mouseXpx = love.mouse.getX()
   mouseX = math.floor(mouseXpx / cellsize)
   mouseYpx = love.mouse.getY()
@@ -140,14 +138,14 @@ function love.draw()
   if hitpoints<1 then
     -- dead
     if playerY<30 then
-      love.graphics.draw(rip, cellsize*playerX, cellsize*playerY - cellsize)
+      love.graphics.draw(rip, cellsize*playerX, cellsize*playerY)
     else
-      love.graphics.draw(rip_stone, cellsize*playerX, cellsize*playerY - cellsize)
+      love.graphics.draw(rip_stone, cellsize*playerX, cellsize*playerY)
     end
   elseif run==0 then    
-    love.graphics.draw(Player, cellsize*playerX, cellsize*playerY - cellsize)
+    love.graphics.draw(Player, cellsize*playerX, cellsize*playerY )
   else 
-    love.graphics.draw(Player2, cellsize*playerX, cellsize*playerY - cellsize)
+    love.graphics.draw(Player2, cellsize*playerX, cellsize*playerY )
   end
 end
 
@@ -170,7 +168,11 @@ function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
     world[colnum][rownum] = world[colnum][rownum] - 1
   end  
 end
-  
+
+function player_tp(targetX, targetY)
+  playerX, playerY = targetX, targetY
+end
+
 function love.keypressed( key ) 
   if key == "f9" then
     file = io.open("world.txt", "r")
@@ -190,27 +192,30 @@ function love.keypressed( key )
   if gameover then
     return
   end
-
+  newX=playerX
+  newY=playerY 
   if key == "d" then
-    playerX = playerX+1
-    run = 1
-    time_start_run = love.timer.getTime()
+    newX = playerX+1
   end
-  
   if key == "a" then
-    playerX = playerX-1
-    run = 1
-    time_start_run = love.timer.getTime()
+    newX = playerX-1
   end
   if key == "w" then
-    playerY = playerY-1
-    run = 1
-    time_start_run = love.timer.getTime()
+    newY = playerY-1
   end
   if key == "s" then
-    playerY = playerY+1
+    newY = playerY+1
+  end
+  
+  if world[newX][newY] == 0 then
+    player_tp(newX,newY) 
     run = 1
     time_start_run = love.timer.getTime()
+  else
+    -- cant go
+    sound_bonk:stop()
+    sound_bonk:play()
+    
   end
 
   if key == "f5" then
@@ -231,3 +236,4 @@ function love.keypressed( key )
     io.close(file)
   end 
 end
+--XD
