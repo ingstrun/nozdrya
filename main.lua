@@ -32,18 +32,22 @@ function init_world()
 end
 
 function love.update(dt)
-  if hitpoints<1 then
-    gameover=true
-  end
+  gameover = hitpoints<1
   
   game_seconds = game_seconds + dt
+  
   if game_seconds > last_tick + 0.1 then
     -- tick
     cow.x = cow.x + 1
 
     last_tick = game_seconds
+    if cow.x == playerX and cow.y == playerY then
+      hitpoints=hitpoints-1
+      sound_oof:stop()
+      sound_oof:play()
+    end  
   end
-
+  
   now = love.timer.getTime()
   if now > time_start_run + 0.5 then
     last_set_ground = now
@@ -91,10 +95,7 @@ function love.draw()
   
   x = cellsize
   
-  --Жижа
-  for hit=1,hitpoints do
-    love.graphics.draw(heart,cellsize*hit,cellsize*2)
-  end
+  
  
   --cow
   love.graphics.draw(sprite.cow,cellsize*cow.x,cellsize*cow.y)
@@ -107,9 +108,7 @@ function love.draw()
   love.graphics.rectangle("line", mouseX*cellsize, mouseY*cellsize, cellsize, cellsize )
   love.graphics.setColor(1, 1, 1)
 
-  if gameover then
-     love.graphics.draw(die,world_w*32/2-die:getWidth()/2,world_h*32/2-die:getHeight()/2-100)
-  end
+ 
   -- 2d world
   for x = 0, world_w do
     for y = 0, world_h do
@@ -130,7 +129,7 @@ function love.draw()
         sprite_to_draw = wood
       end
       love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
-      love.graphics.print(world[x][y], cellsize*x, cellsize*y)
+      --love.graphics.print(world[x][y], cellsize*x, cellsize*y)
     end
   end
   --player
@@ -146,6 +145,13 @@ function love.draw()
   else 
     love.graphics.draw(Player2, cellsize*playerX, cellsize*playerY )
   end
+  --Жижа
+  for hit=1,hitpoints do
+    love.graphics.draw(heart,cellsize*hit,cellsize*2)
+  end
+  if gameover then
+    love.graphics.draw(die,world_w*32/2-die:getWidth()/2,world_h*32/2-die:getHeight()/2-100)
+ end
 end
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
