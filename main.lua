@@ -110,7 +110,6 @@ function love.draw()
   if gameover then
      love.graphics.draw(die,world_w*32/2-die:getWidth()/2,world_h*32/2-die:getHeight()/2-100)
   end
-  
   -- 2d world
   for x = 0, world_w do
     for y = 0, world_h do
@@ -225,10 +224,15 @@ function love.keypressed( key )
     io.output(file)
     io.write(playerX)
     io.write("\n")
+    io.write(playerY)
+    io.write("\n")
     io.write(hitpoints)
     io.write("\n")
-    for i = 0, world_w-1 do
-      io.write(ground_level[i])
+    for i = 0, world_h-1 do
+      for XD = 0, world_w-1 do
+        io.write(world[XD][i])
+        io.write(" ")
+      end
       io.write("\n")
     end
     
