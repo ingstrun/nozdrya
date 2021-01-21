@@ -179,10 +179,12 @@ function love.keypressed( key )
     io.input(file)
     i = 0
     playerX = io.read("*number")
+    playerY = io.read("*number")
     hitpoints = io.read("*number")
-    
-    for i = 0, world_w-1 do
-      ground_level[i] = io.read("*number")
+    for i = 0, world_h-1 do
+      for XD = 0, world_w-1 do
+        world[XD][i] = io.read("*number")      
+      end
     end
    
     io.close(file)
