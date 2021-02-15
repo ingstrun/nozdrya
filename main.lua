@@ -1,6 +1,6 @@
 local playerX = 5
 local playerY = 5
-local cow = {x = 5, y = 5}
+local cow = {x = 5, y = 5, speed_X=-1, speed_Y=0}
 local accel = 300
 local run = 0
 local mob_run = 0
@@ -38,7 +38,9 @@ function love.update(dt)
   
   if game_seconds > last_tick + 0.1 then
     -- tick
-    cow.x = cow.x + 1
+    
+    cow.x = cow.x + cow.speed_X
+    cow.y = cow.y + cow.speed_Y
 
     last_tick = game_seconds
     if cow.x == playerX and cow.y == playerY then
