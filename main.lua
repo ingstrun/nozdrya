@@ -1,6 +1,6 @@
 local playerX = 5
 local playerY = 5
-local cow = {x = 5, y = 5, speed_X=-1, speed_Y=0}
+local cow = {x = 5, y = 5, speed_X=-1, speed_Y=1}
 local accel = 300
 local run = 0
 local mob_run = 0
@@ -40,18 +40,14 @@ function love.update(dt)
     -- tick
     newcowY = cow.y + cow.speed_Y
     newcowX = cow.x + cow.speed_X
-    if world[newcowX][newcowY]==0  then
-      
+    if newcowX>=0 and newcowX<world_w and newcowY>=0 and newcowY<world_h and world[newcowX][newcowY]==0  then
       cow.x = cow.x + cow.speed_X
       cow.y = cow.y + cow.speed_Y
     else
       sound_bonk:stop()
       sound_bonk:play()
-     if cow.speed_X == 1 then
-      cow.speed_X = -1
-     else
-      cow.speed_X = 1
-     end 
+      cow.speed_X = - cow.speed_X
+      cow.speed_Y = - cow.speed_Y
     end
     last_tick = game_seconds
     if cow.x == playerX and cow.y == playerY then
