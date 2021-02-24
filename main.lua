@@ -38,10 +38,21 @@ function love.update(dt)
   
   if game_seconds > last_tick + 0.1 then
     -- tick
-    
-    cow.x = cow.x + cow.speed_X
-    cow.y = cow.y + cow.speed_Y
-
+    newcowY = cow.y + cow.speed_Y
+    newcowX = cow.x + cow.speed_X
+    if world[newcowX][newcowY]==0  then
+      
+      cow.x = cow.x + cow.speed_X
+      cow.y = cow.y + cow.speed_Y
+    else
+      sound_bonk:stop()
+      sound_bonk:play()
+     if cow.speed_X == 1 then
+      cow.speed_X = -1
+     else
+      cow.speed_X = 1
+     end 
+    end
     last_tick = game_seconds
     if cow.x == playerX and cow.y == playerY then
       hitpoints=hitpoints-1
