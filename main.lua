@@ -1,6 +1,6 @@
 local playerX = 5
 local playerY = 5
-local cow = {x = 5, y = 5, speed_X=-1, speed_Y=1}
+local cow = {x = 5, y = 5, speed_X=-1, speed_Y=0.}
 local accel = 300
 local run = 0
 local mob_run = 0
@@ -35,12 +35,46 @@ function love.update(dt)
   gameover = hitpoints<1
   
   game_seconds = game_seconds + dt
+
+  mouseXpx = love.mouse.getX()
+  mouseX = math.floor(mouseXpx / cellsize)
+  mouseYpx = love.mouse.getY()
+  mouseY = math.floor(mouseYpx / cellsize)
+
+  if love.keyboard.isDown("1") then
+    world[mouseX][mouseY] = 1
+  end
+
+
+  if love.keyboard.isDown("2") then
+    world[mouseX][mouseY] = 2
+  end
+
+  if love.keyboard.isDown("3") then
+    world[mouseX][mouseY] = 3
+  end
+
+  if love.keyboard.isDown("4") then
+    world[mouseX][mouseY] = 4
+  end
+
+  if love.keyboard.isDown("5") then
+    world[mouseX][mouseY] = 5
+  end
+
+  if love.keyboard.isDown("6") then
+    world[mouseX][mouseY] = 6
+  end
+
+  if love.keyboard.isDown("0") then
+    world[mouseX][mouseY] = 0
+  end
   
   if game_seconds > last_tick + 0.1 then
     -- tick
     newcowY = cow.y + cow.speed_Y
     newcowX = cow.x + cow.speed_X
-    if newcowX>=0 and newcowX<world_w and newcowY>=0 and newcowY<world_h and world[newcowX][newcowY]==0  then
+    if ( newcowX>=0 and newcowX<world_w and newcowY>=0 and newcowY<world_h ) and ( world[newcowX][newcowY]==0 or world[newcowX][newcowY]==6 ) then
       cow.x = cow.x + cow.speed_X
       cow.y = cow.y + cow.speed_Y
     else
@@ -69,13 +103,13 @@ function love.load()
   love.window.setTitle("Ноздря")
   love.window.setMode(cellsize * world_w, cellsize * world_h)
   
-  dirt = love.graphics.newImage("dirt.png")
-  grass = love.graphics.newImage("grass.png")
+  sprite["dirt"] = love.graphics.newImage("dirt.png")
+  sprite["grass"] = love.graphics.newImage("grass.png")
   Player = love.graphics.newImage("burger.png")
   Player2 = love.graphics.newImage("burger2.png")
-  stone=love.graphics.newImage("stone.png")
+  sprite["stone"]=love.graphics.newImage("stone.png")
   no = love.graphics.newImage("пустота.png")
-  wood = love.graphics.newImage("wood.png")
+  sprite["wood"] = love.graphics.newImage("wood.png")
   heart = love.graphics.newImage("heart.png")
   rip = love.graphics.newImage("tomb.png")
   die = love.graphics.newImage("gameover.png")
@@ -83,6 +117,7 @@ function love.load()
   rip_stone = love.graphics.newImage("tomb_cave.png")
   sprite["cow"] = love.graphics.newImage("cow.png")
   sprite["bricks"] = love.graphics.newImage("bricks.png")
+  sprite["background"] = love.graphics.newImage("background.png")
 
   sound_bonk = love.audio.newSource("bonk.mp3", "static")
   sound_oof = love.audio.newSource("oof.mp3", "static")
@@ -104,10 +139,7 @@ function love.draw()
   
   x = cellsize
   
-  
  
-  --cow
-  love.graphics.draw(sprite.cow,cellsize*cow.x,cellsize*cow.y)
   
   mouseXpx = love.mouse.getX()
   mouseX = math.floor(mouseXpx / cellsize)
@@ -116,31 +148,39 @@ function love.draw()
   love.graphics.setColor(1, 0.5, 0.5)
   love.graphics.rectangle("line", mouseX*cellsize, mouseY*cellsize, cellsize, cellsize )
   love.graphics.setColor(1, 1, 1)
-
+ 
  
   -- 2d world
   for x = 0, world_w do
     for y = 0, world_h do
       sprite_to_draw = no
       if world[x][y] == 1 then
-        sprite_to_draw = grass
+        sprite_to_draw = sprite["grass"]
       end
       if world[x][y] == 2 then
-        sprite_to_draw = dirt
+        sprite_to_draw = sprite["dirt"]
       end
       if world[x][y] == 3 then
-        sprite_to_draw = stone
+        sprite_to_draw = sprite["stone"]
       end
       if world[x][y] == 4 then
         sprite_to_draw = sprite["bricks"]
       end 
       if world[x][y] == 5 then
-        sprite_to_draw = wood
+        sprite_to_draw = sprite["wood"]
       end
+      if world[x][y] == 6 then
+        sprite_to_draw = sprite["background"]
+      end
+      
       love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
       --love.graphics.print(world[x][y], cellsize*x, cellsize*y)
     end
   end
+  
+  --cow
+  love.graphics.draw(sprite.cow,cellsize*cow.x,cellsize*cow.y)
+  
   --player
   if hitpoints<1 then
     -- dead
@@ -171,8 +211,6 @@ function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
   
   if button == 1 then 
     world[colnum][rownum] = world[colnum][rownum] + 1
-    cow.x = colnum
-    cow.y = rownum
   else 
     if world[colnum][rownum] > 0 then
       world[colnum][rownum] = world[colnum][rownum] - 1
@@ -208,6 +246,7 @@ function love.keypressed( key )
   if gameover then
     return
   end
+  
   newX=playerX
   newY=playerY 
   if key == "d" then
@@ -223,7 +262,17 @@ function love.keypressed( key )
     newY = playerY+1
   end
   
-  if world[newX][newY] == 0 then
+  mouseXpx = love.mouse.getX()
+  mouseX = math.floor(mouseXpx / cellsize)
+  mouseYpx = love.mouse.getY()
+  mouseY = math.floor(mouseYpx / cellsize)
+
+  if key == "c" then
+    cow.x = mouseX
+    cow.y = mouseY
+  end
+
+  if world[newX][newY] == 0 or world[newX][newY] == 6 then
     player_tp(newX,newY) 
     run = 1
     time_start_run = love.timer.getTime()
