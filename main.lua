@@ -22,12 +22,19 @@ local world = {}
 --горнасть
 function init_world()
   math.randomseed(os.time())
-
+  math.random(0,10)
   for x = 0, world_w do
     world[x] = {}
     for y = 0, world_h do
-      world[x][y] = 0
-    end
+      if y>-1 and y<20 then
+        world[x][y] = 0
+      else
+        world[x][y] = math.random(2,3) 
+      end               
+      if y==20 then
+        world[x][y] = 1
+      end  
+    end               
   end
 end
 
@@ -261,7 +268,9 @@ function love.keypressed( key )
   if key == "s" then
     newY = playerY+1
   end
-  
+  if key == "g" then
+    init_world()
+  end
   mouseXpx = love.mouse.getX()
   mouseX = math.floor(mouseXpx / cellsize)
   mouseYpx = love.mouse.getY()
