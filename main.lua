@@ -7,6 +7,8 @@ local mob_run = 0
 local cellsize = 32
 local world_h = 40
 local world_w = 70
+local dange_h = 5
+local dange_w = 8
 local time_start_run = 0
 local start_time = love.timer.getTime()
 local last_set_ground = start_time - 1
@@ -36,6 +38,21 @@ function init_world()
       end  
     end               
   end
+  --dange
+  dangeX=math.random(0,world_w-dange_w)
+  dangeY=math.random(23,world_h-dange_h)
+  
+  file = io.open("dange.txt", "r")
+  -- sets the default output file as test.lua
+  io.input(file)
+  
+  for i = 0, dange_h-1 do
+    for XD = 0, dange_w-1 do
+      world[XD+dangeX][i+dangeY] = io.read("*number")      
+    end
+  end
+  
+  io.close(file)
 end
 
 function love.update(dt)
