@@ -72,6 +72,9 @@ function love.update(dt)
   if love.keyboard.isDown("6") then
     world[mouseX][mouseY] = 6
   end
+  if love.keyboard.isDown("9") then
+    world[mouseX][mouseY] = 9
+  end
 
   if love.keyboard.isDown("0") then
     world[mouseX][mouseY] = 0
@@ -125,7 +128,7 @@ function love.load()
   sprite["cow"] = love.graphics.newImage("cow.png")
   sprite["bricks"] = love.graphics.newImage("bricks.png")
   sprite["background"] = love.graphics.newImage("background.png")
-
+  sprite["sword"] = love.graphics.newImage("sword.png")   
   sound_bonk = love.audio.newSource("bonk.mp3", "static")
   sound_oof = love.audio.newSource("oof.mp3", "static")
   music = love.audio.newSource("music.mp3", "stream")
@@ -179,7 +182,9 @@ function love.draw()
       if world[x][y] == 6 then
         sprite_to_draw = sprite["background"]
       end
-      
+      if world[x][y] == 9 then
+        sprite_to_draw = sprite["sword"]
+      end
       love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
       --love.graphics.print(world[x][y], cellsize*x, cellsize*y)
     end
