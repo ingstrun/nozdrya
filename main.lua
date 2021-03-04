@@ -138,22 +138,20 @@ function love.load()
   love.window.setTitle("Ноздря")
   love.window.setMode(cellsize * world_w, cellsize * world_h)
   
-  sprite["dirt"] = love.graphics.newImage("dirt.png")
-  sprite["grass"] = love.graphics.newImage("grass.png")
   Player = love.graphics.newImage("burger.png")
   Player2 = love.graphics.newImage("burger2.png")
-  sprite["stone"]=love.graphics.newImage("stone.png")
-  no = love.graphics.newImage("пустота.png")
-  sprite["wood"] = love.graphics.newImage("wood.png")
   heart = love.graphics.newImage("heart.png")
   rip = love.graphics.newImage("tomb.png")
   die = love.graphics.newImage("gameover.png")
-  stone_grass = love.graphics.newImage("stone_grass.png")
-  rip_stone = love.graphics.newImage("tomb_cave.png")
   sprite["cow"] = love.graphics.newImage("cow.png")
-  sprite["bricks"] = love.graphics.newImage("bricks.png")
-  sprite["background"] = love.graphics.newImage("background.png")
-  sprite["sword"] = love.graphics.newImage("sword.png")   
+  rip_stone = love.graphics.newImage("tomb_cave.png")
+  
+  for i, bl in pairs(blocks) do
+    if bl.sprite then
+      bl.img = love.graphics.newImage(bl.sprite)
+    end
+  end
+  
   sound_bonk = love.audio.newSource("bonk.mp3", "static")
   sound_oof = love.audio.newSource("oof.mp3", "static")
   music = love.audio.newSource("music.mp3", "stream")
@@ -188,29 +186,10 @@ function love.draw()
   -- 2d world
   for x = 0, world_w do
     for y = 0, world_h do
-      sprite_to_draw = no
-      if world[x][y] == 1 then
-        sprite_to_draw = sprite["grass"]
+      sprite_to_draw = blocks[ world[x][y] ].img
+      if sprite_to_draw then
+        love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
       end
-      if world[x][y] == 2 then
-        sprite_to_draw = sprite["dirt"]
-      end
-      if world[x][y] == 3 then
-        sprite_to_draw = sprite["stone"]
-      end
-      if world[x][y] == 4 then
-        sprite_to_draw = sprite["bricks"]
-      end 
-      if world[x][y] == 5 then
-        sprite_to_draw = sprite["wood"]
-      end
-      if world[x][y] == 6 then
-        sprite_to_draw = sprite["background"]
-      end
-      if world[x][y] == 9 then
-        sprite_to_draw = sprite["sword"]
-      end
-      love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
       --love.graphics.print(world[x][y], cellsize*x, cellsize*y)
     end
   end
