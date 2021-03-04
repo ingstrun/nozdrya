@@ -266,7 +266,11 @@ function love.keypressed( key )
     world[newX][newY] = world[newX][newY] - 1
   end
   if blocks[world[newX][newY]].passable then
-    player_tp(newX,newY) 
+    player_tp(newX,newY)
+    if blocks[world[newX][newY]].collectable then
+      -- FIXME add to inventory
+      world[newX][newY] = 0
+    end
     run = 1
     time_start_run = love.timer.getTime()
   else
