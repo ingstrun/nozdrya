@@ -109,7 +109,7 @@ function love.update(dt)
     -- tick
     newcowY = cow.y + cow.speed_Y
     newcowX = cow.x + cow.speed_X
-    if ( newcowX>=0 and newcowX<world_w and newcowY>=0 and newcowY<world_h ) and ( world[newcowX][newcowY]==0 or world[newcowX][newcowY]==6 ) then
+    if ( newcowX>=0 and newcowX<world_w and newcowY>=0 and newcowY<world_h ) and blocks[world[newcowX][newcowY]].passable then
       cow.x = cow.x + cow.speed_X
       cow.y = cow.y + cow.speed_Y
     else
@@ -171,9 +171,7 @@ function love.draw()
   h = love.graphics.getHeight()  -- window height
   
   x = cellsize
-  
  
-  
   mouseXpx = love.mouse.getX()
   mouseX = math.floor(mouseXpx / cellsize)
   mouseYpx = love.mouse.getY()
@@ -290,7 +288,7 @@ function love.keypressed( key )
     cow.y = mouseY
   end
 
-  if world[newX][newY] == 0 or world[newX][newY] == 6 then
+  if blocks[world[newX][newY]].passable then
     player_tp(newX,newY) 
     run = 1
     time_start_run = love.timer.getTime()
