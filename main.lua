@@ -20,7 +20,15 @@ local game_seconds = 0
 local last_tick = 0
 local sprite = {}
 local world = {}
-
+local blocks = {}
+blocks[0] = { number = 0, set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
+blocks[1] = { number = 1, set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[2] = { number = 2, set_key = "2", sprite = "dirt.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[3] = { number = 3, set_key = "3", sprite = "stone.png", passable = false, breakable = false, collectable = false, pushable = false }
+blocks[4] = { number = 4, set_key = "4", sprite = "bricks.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[5] = { number = 5, set_key = "5", sprite = "wood.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[6] = { number = 6, set_key = "6", sprite = "background.png", passable = true, breakable = false, collectable = false, pushable = false }
+blocks[9] = { number = 9, set_key = "9", sprite = "sword.png", passable = true, breakable = false, collectable = true, pushable = false }
 --горнасть
 function init_world()
   math.randomseed(os.time())
