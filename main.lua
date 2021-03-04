@@ -1,6 +1,6 @@
 local playerX = 5
 local playerY = 5
-local cow = {x = 5, y = 5, speed_X=-1, speed_Y=0.}
+local cow = {x = 5, y = 5, speed_X=-1, speed_Y=0, bonks_left = 15}
 local accel = 300
 local run = 0
 local mob_run = 0
@@ -87,8 +87,11 @@ function love.update(dt)
       cow.x = cow.x + cow.speed_X
       cow.y = cow.y + cow.speed_Y
     else
-      sound_bonk:stop()
-      sound_bonk:play()
+      if cow.bonks_left > 0 then
+        sound_bonk:stop()
+        sound_bonk:play()
+        cow.bonks_left = cow.bonks_left -1
+      end
       cow.speed_X = - cow.speed_X
       cow.speed_Y = - cow.speed_Y
     end
