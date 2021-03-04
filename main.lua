@@ -262,6 +262,9 @@ function love.keypressed( key )
     cow.y = mouseY
   end
 
+  if blocks[world[newX][newY]].breakable then
+    world[newX][newY] = world[newX][newY] - 1
+  end
   if blocks[world[newX][newY]].passable then
     player_tp(newX,newY) 
     run = 1
