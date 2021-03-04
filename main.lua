@@ -73,36 +73,10 @@ function love.update(dt)
   mouseYpx = love.mouse.getY()
   mouseY = math.floor(mouseYpx / cellsize)
 
-  if love.keyboard.isDown("1") then
-    world[mouseX][mouseY] = 1
-  end
-
-
-  if love.keyboard.isDown("2") then
-    world[mouseX][mouseY] = 2
-  end
-
-  if love.keyboard.isDown("3") then
-    world[mouseX][mouseY] = 3
-  end
-
-  if love.keyboard.isDown("4") then
-    world[mouseX][mouseY] = 4
-  end
-
-  if love.keyboard.isDown("5") then
-    world[mouseX][mouseY] = 5
-  end
-
-  if love.keyboard.isDown("6") then
-    world[mouseX][mouseY] = 6
-  end
-  if love.keyboard.isDown("9") then
-    world[mouseX][mouseY] = 9
-  end
-
-  if love.keyboard.isDown("0") then
-    world[mouseX][mouseY] = 0
+  for i, bl in pairs(blocks) do
+    if love.keyboard.isDown( bl.set_key ) then
+      world[mouseX][mouseY] = i
+    end
   end
   
   if game_seconds > last_tick + 0.1 then
