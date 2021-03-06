@@ -32,6 +32,8 @@ blocks[9] = { number = 9, set_key = "9", sprite = "sword.png", passable = true, 
 
 local inv = {}
 inv[9]=0
+inv[1]=1
+inv[2]=5
 
 --горнасть
 function init_world()
@@ -195,8 +197,12 @@ function love.draw()
   for hit=1,hitpoints do
     love.graphics.draw(heart,cellsize*hit,cellsize)
   end
-  love.graphics.draw(blocks[9].img,cellsize,cellsize*2)
-  love.graphics.print("x"..inv[9], cellsize*2,cellsize*2, 0, 2)
+  e = 2*2
+  for what, num in pairs(inv) do
+    love.graphics.draw(blocks[what].img,cellsize,cellsize*e)
+    love.graphics.print(" x "..inv[what], cellsize*2,cellsize*e, 0, 2)
+    e = e+2
+  end
   if gameover then
     love.graphics.draw(die,world_w*32/2-die:getWidth()/2,world_h*32/2-die:getHeight()/2-100)
  end
@@ -274,7 +280,9 @@ function love.keypressed( key )
   end
 
   if blocks[world[newX][newY]].breakable then
-    world[newX][newY] = world[newX][newY] - 1
+    -- FIXME check if inventory entry present
+    inv[world[newX][newY]] =  inv[world[newX][newY]] + 1
+    world[newX][newY] = 0
   end
   if blocks[world[newX][newY]].passable then
     player_tp(newX,newY)
