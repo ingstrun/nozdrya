@@ -7,7 +7,7 @@ local mob_run = 0
 local cellsize = 32
 local world_h = 40
 local world_w = 70
-local dange_h = 5
+local dange_h = 9
 local dange_w = 8
 local time_start_run = 0
 local start_time = love.timer.getTime()
@@ -29,6 +29,10 @@ blocks[4] = { number = 4, set_key = "4", sprite = "bricks.png", passable = false
 blocks[5] = { number = 5, set_key = "5", sprite = "wood.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[6] = { number = 6, set_key = "6", sprite = "background.png", passable = true, breakable = false, collectable = false, pushable = false }
 blocks[9] = { number = 9, set_key = "9", sprite = "sword.png", passable = true, breakable = false, collectable = true, pushable = false }
+
+local inv = {}
+inv[9]=0
+
 --горнасть
 function init_world()
   math.randomseed(os.time())
@@ -43,7 +47,7 @@ function init_world()
       end               
       if y==20 then
         world[x][y] = 1
-      end  
+      end 
     end               
   end
   --dange
@@ -169,6 +173,8 @@ function love.draw()
     end
   end
   
+
+
   --cow
   love.graphics.draw(sprite.cow,cellsize*cow.x,cellsize*cow.y)
   
@@ -187,8 +193,10 @@ function love.draw()
   end
   --Жижа
   for hit=1,hitpoints do
-    love.graphics.draw(heart,cellsize*hit,cellsize*2)
+    love.graphics.draw(heart,cellsize*hit,cellsize)
   end
+  love.graphics.draw(blocks[9].img,cellsize,cellsize*2)
+  love.graphics.print("x"..inv[9], cellsize*2,cellsize*2, 0, 2)
   if gameover then
     love.graphics.draw(die,world_w*32/2-die:getWidth()/2,world_h*32/2-die:getHeight()/2-100)
  end
@@ -271,7 +279,8 @@ function love.keypressed( key )
   if blocks[world[newX][newY]].passable then
     player_tp(newX,newY)
     if blocks[world[newX][newY]].collectable then
-      -- FIXME add to inventory
+      -- add to inventory
+      inv[world[newX][newY]] = inv[world[newX][newY]] + 10
       world[newX][newY] = 0
     end
     run = 1
