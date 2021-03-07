@@ -9,6 +9,8 @@ local world_h = 40
 local world_w = 70
 local dange_h = 9
 local dange_w = 8
+local cave_h = 9
+local cave_w = 9
 local time_start_run = 0
 local start_time = love.timer.getTime()
 local last_set_ground = start_time - 1
@@ -29,12 +31,15 @@ blocks[4] = { number = 4, set_key = "4", sprite = "bricks.png", passable = false
 blocks[5] = { number = 5, set_key = "5", sprite = "wood.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[6] = { number = 6, set_key = "6", sprite = "background.png", passable = true, breakable = false, collectable = false, pushable = false }
 blocks[9] = { number = 9, set_key = "9", sprite = "sword.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[8] = { number = 8, set_key = "_", sprite = "gold_ore.png", passable = false, breakable = true, collectable = false, pushable = false }
 
 local inv = {}
 inv[9]=0
 inv[1]=1
 inv[2]=5
-
+inv[5]=0
+inv[4]=0
+inv[8]=0
 --горнасть
 function init_world()
   math.randomseed(os.time())
@@ -45,7 +50,9 @@ function init_world()
       if y>-1 and y<20 then
         world[x][y] = 0
       else
-        world[x][y] = math.random(2,3) 
+        stonks = {2,2,2,3,8} 
+        idx = math.random(1,#stonks)
+        world[x][y] = stonks[idx]
       end               
       if y==20 then
         world[x][y] = 1
@@ -65,8 +72,20 @@ function init_world()
       world[XD+dangeX][i+dangeY] = io.read("*number")      
     end
   end
-  
   io.close(file)
+  
+  file = io.open("cave", "r")
+  -- sets the default output file as test.lua
+  io.input(file)
+  caveX=math.random(0,world_w-dange_w)
+  caveY=math.random(23,world_h-dange_h)
+
+  for i = 0, cave_h-1 do
+    for XD = 0, cave_w-1 do
+      world[XD+caveX][i+caveY] = io.read("*number")      
+    end
+  end
+  io.close(file)  
 end
 
 function love.update(dt)
@@ -281,7 +300,7 @@ function love.keypressed( key )
 
   if blocks[world[newX][newY]].breakable then
     -- FIXME check if inventory entry present
-    inv[world[newX][newY]] =  inv[world[newX][newY]] + 1
+    inv[world[newX][newY]] = inv[world[newX][newY]] + 1
     world[newX][newY] = 0
   end
   if blocks[world[newX][newY]].passable then
