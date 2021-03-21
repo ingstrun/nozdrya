@@ -1,14 +1,13 @@
 local playerX = 5
 local playerY = 5
-local cow = {x = 5, y = 5, speed_X=-1, speed_Y=0, bonks_left = 15}
 local accel = 300
 local run = 0
 local mob_run = 0
 local cellsize = 32
-local world_h = 40
-local world_w = 70
-local dange_h = 9
-local dange_w = 8
+local world_h = 40                    
+local world_w = 70                     
+local dange_h = 9                      
+local dange_w = 8                     
 local cave_h = 9
 local cave_w = 9
 local time_start_run = 0
@@ -30,7 +29,7 @@ blocks[3] = { number = 3, set_key = "3", sprite = "stone.png", passable = false,
 blocks[4] = { number = 4, set_key = "4", sprite = "bricks.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[5] = { number = 5, set_key = "5", sprite = "wood.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[6] = { number = 6, set_key = "6", sprite = "background.png", passable = true, breakable = false, collectable = false, pushable = false }
-blocks[9] = { number = 9, set_key = "9", sprite = "sword.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[9] = { number = 9, set_key = "_", sprite = "sword.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[8] = { number = 8, set_key = "_", sprite = "gold_ore.png", passable = false, breakable = true, collectable = false, pushable = false }
 
 local inv = {}
@@ -40,6 +39,10 @@ inv[2]=5
 inv[5]=0
 inv[4]=0
 inv[8]=0
+
+local mobs = {}
+mobs[1] = {x = 5, y = 5, speed_X=-1, speed_Y=0, bonks_left = 15}
+
 --горнасть
 function init_world()
   math.randomseed(os.time())
@@ -88,6 +91,10 @@ function init_world()
   io.close(file)  
 end
 
+function can_walk(x,y)
+  return ( x>=0 and x<world_w and y>=0 and y<world_h ) and blocks[world[x][y]].passable
+end
+
 function love.update(dt)
   gameover = hitpoints<1
   
@@ -106,26 +113,28 @@ function love.update(dt)
   
   if game_seconds > last_tick + 0.1 then
     -- tick
-    newcowY = cow.y + cow.speed_Y
-    newcowX = cow.x + cow.speed_X
-    if ( newcowX>=0 and newcowX<world_w and newcowY>=0 and newcowY<world_h ) and blocks[world[newcowX][newcowY]].passable then
-      cow.x = cow.x + cow.speed_X
-      cow.y = cow.y + cow.speed_Y
-    else
-      if cow.bonks_left > 0 then
-        sound_bonk:stop()
-        sound_bonk:play()
-        cow.bonks_left = cow.bonks_left -1
+    for i, cow in ipairs(mobs) do
+      newcowY = cow.y + cow.speed_Y
+      newcowX = cow.x + cow.speed_X
+      if can_walk(newcowX, newcowY) then
+        cow.x = cow.x + cow.speed_X
+        cow.y = cow.y + cow.speed_Y
+      else
+        if cow.bonks_left > 0 then
+          sound_bonk:stop()
+          sound_bonk:play()
+          cow.bonks_left = cow.bonks_left -1
+        end
+        cow.speed_X = - cow.speed_X
+        cow.speed_Y = - cow.speed_Y
       end
-      cow.speed_X = - cow.speed_X
-      cow.speed_Y = - cow.speed_Y
+      last_tick = game_seconds
+      if cow.x == playerX and cow.y == playerY then
+        hitpoints=hitpoints-1
+        sound_oof:stop()
+        sound_oof:play()
+      end  
     end
-    last_tick = game_seconds
-    if cow.x == playerX and cow.y == playerY then
-      hitpoints=hitpoints-1
-      sound_oof:stop()
-      sound_oof:play()
-    end  
   end
   
   now = love.timer.getTime()
@@ -193,11 +202,11 @@ function love.draw()
       --love.graphics.print(world[x][y], cellsize*x, cellsize*y)
     end
   end
-  
 
-
-  --cow
-  love.graphics.draw(sprite.cow,cellsize*cow.x,cellsize*cow.y)
+  -- mobs
+  for i, mob in pairs(mobs) do
+    love.graphics.draw(sprite.cow, cellsize*mob.x, cellsize*mob.y)
+  end
   
   --player
   if hitpoints<1 then
@@ -294,8 +303,8 @@ function love.keypressed( key )
   mouseY = math.floor(mouseYpx / cellsize)
 
   if key == "c" then
-    cow.x = mouseX
-    cow.y = mouseY
+    newcow = {x = mouseX, y = mouseY, speed_X=-1, speed_Y=0, bonks_left = 15}
+    table.insert(mobs, newcow)
   end
 
   if blocks[world[newX][newY]].breakable then
