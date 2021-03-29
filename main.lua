@@ -33,7 +33,7 @@ blocks[9] = { number = 9, set_key = "_", sprite = "sword.png", passable = true, 
 blocks[8] = { number = 8, set_key = "_", sprite = "gold_ore.png", passable = false, breakable = true, collectable = false, pushable = false }
 
 local inv = {}
-inv[9]=0
+inv[9]=666
 inv[1]=1
 inv[2]=5
 inv[5]=0
@@ -130,9 +130,15 @@ function love.update(dt)
       end
       last_tick = game_seconds
       if cow.x == playerX and cow.y == playerY then
-        hitpoints=hitpoints-1
-        sound_oof:stop()
-        sound_oof:play()
+        if inv[9]>0 then
+          inv[9]=inv[9]-1
+          -- remove cow
+          table.remove (mobs,i)
+        else  
+          hitpoints=hitpoints-1
+          sound_oof:stop()
+          sound_oof:play()
+        end
       end  
     end
   end
@@ -307,12 +313,13 @@ function love.keypressed( key )
     table.insert(mobs, newcow)
   end
 
-  if blocks[world[newX][newY]].breakable then
+  if (newX >= 0 and newX<world_w and newY >= 0 and newY<world_h) and blocks[world[newX][newY]].breakable then
     -- FIXME check if inventory entry present
     inv[world[newX][newY]] = inv[world[newX][newY]] + 1
     world[newX][newY] = 0
   end
-  if blocks[world[newX][newY]].passable then
+
+  if can_walk(newX, newY) then
     player_tp(newX,newY)
     if blocks[world[newX][newY]].collectable then
       -- add to inventory
