@@ -10,6 +10,8 @@ local dange_h = 9
 local dange_w = 8                     
 local cave_h = 9
 local cave_w = 9
+local tree_h = 2                      
+local tree_w = 8    
 local time_start_run = 0
 local start_time = love.timer.getTime()
 local last_set_ground = start_time - 1
@@ -89,8 +91,19 @@ function init_world()
     end
   end
   io.close(file)  
-end
 
+  file = io.open("tree","r")
+  io.input(file)
+  treeX=math.random(0,world_w-dange_w)
+  treeY=18
+
+  for i = 0, tree_h-1 do
+    for XD = 0, tree_w-1 do
+      world[XD+treeX][i+treeY] = io.read("*number")      
+    end
+  end
+  io.close(file)  
+end
 function can_walk(x,y)
   return ( x>=0 and x<world_w and y>=0 and y<world_h ) and blocks[world[x][y]].passable
 end
