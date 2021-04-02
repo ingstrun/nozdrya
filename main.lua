@@ -4,14 +4,14 @@ local accel = 300
 local run = 0
 local mob_run = 0
 local cellsize = 32
-local world_h = 40                    
-local world_w = 70                     
-local dange_h = 9                      
-local dange_w = 8                     
+local world_h = 40
+local world_w = 70
+local dange_h = 9
+local dange_w = 8
 local cave_h = 9
 local cave_w = 9
-local tree_h = 2                      
-local tree_w = 8    
+local tree_h = 2
+local tree_w = 8
 local time_start_run = 0
 local start_time = love.timer.getTime()
 local last_set_ground = start_time - 1
@@ -55,30 +55,30 @@ function init_world()
       if y>-1 and y<20 then
         world[x][y] = 0
       else
-        stonks = {2,2,2,3,8} 
+        stonks = {2,2,2,3,8}
         idx = math.random(1,#stonks)
         world[x][y] = stonks[idx]
-      end               
+      end
       if y==20 then
         world[x][y] = 1
-      end 
-    end               
+      end
+    end
   end
   --dange
   dangeX=math.random(0,world_w-dange_w)
   dangeY=math.random(23,world_h-dange_h)
-  
+
   file = io.open("dange.txt", "r")
   -- sets the default output file as test.lua
   io.input(file)
-  
+
   for i = 0, dange_h-1 do
     for XD = 0, dange_w-1 do
-      world[XD+dangeX][i+dangeY] = io.read("*number")      
+      world[XD+dangeX][i+dangeY] = io.read("*number")
     end
   end
   io.close(file)
-  
+
   file = io.open("cave", "r")
   -- sets the default output file as test.lua
   io.input(file)
@@ -87,10 +87,10 @@ function init_world()
 
   for i = 0, cave_h-1 do
     for XD = 0, cave_w-1 do
-      world[XD+caveX][i+caveY] = io.read("*number")      
+      world[XD+caveX][i+caveY] = io.read("*number")
     end
   end
-  io.close(file)  
+  io.close(file)
 
   file = io.open("tree","r")
   io.input(file)
@@ -99,10 +99,10 @@ function init_world()
 
   for i = 0, tree_h-1 do
     for XD = 0, tree_w-1 do
-      world[XD+treeX][i+treeY] = io.read("*number")      
+      world[XD+treeX][i+treeY] = io.read("*number")
     end
   end
-  io.close(file)  
+  io.close(file)
 end
 function can_walk(x,y)
   return ( x>=0 and x<world_w and y>=0 and y<world_h ) and blocks[world[x][y]].passable
@@ -110,7 +110,7 @@ end
 
 function love.update(dt)
   gameover = hitpoints<1
-  
+
   game_seconds = game_seconds + dt
 
   mouseXpx = love.mouse.getX()
@@ -123,21 +123,25 @@ function love.update(dt)
       world[mouseX][mouseY] = i
     end
   end
-  
+
   if game_seconds > last_tick + 0.1 then
     -- tick
     for i, cow in ipairs(mobs) do
       if playerX>cow.x then
         cow.speed_X=1
+      elseif playerX == cow.x then
+        cow.speed_X = 0
       else
-        cow.speed_X=-1  
-      end  
-      
-      if playerY>cow.y then
+        cow.speed_X=-1
+      end
+
+      if playerY > cow.y then
         cow.speed_Y=1
+      elseif playerY == cow.y then
+        cow.speed_Y = 0
       else
-        cow.speed_Y=-1  
-      end  
+        cow.speed_Y = -1
+      end
       newcowY = cow.y + cow.speed_Y
       newcowX = cow.x + cow.speed_X
       if can_walk(newcowX, newcowY) then
@@ -158,15 +162,15 @@ function love.update(dt)
           inv[9]=inv[9]-1
           -- remove cow
           table.remove (mobs,i)
-        else  
+        else
           hitpoints=hitpoints-1
           sound_oof:stop()
           sound_oof:play()
         end
-      end  
+      end
     end
   end
-  
+
   now = love.timer.getTime()
   if now > time_start_run + 0.5 then
     last_set_ground = now
@@ -178,7 +182,7 @@ function love.load()
   init_world()
   love.window.setTitle("Ноздря")
   love.window.setMode(cellsize * world_w, cellsize * world_h)
-  
+
   Player = love.graphics.newImage("burger.png")
   Player2 = love.graphics.newImage("burger2.png")
   heart = love.graphics.newImage("heart.png")
@@ -195,7 +199,7 @@ function love.load()
       bl.img = love.graphics.newImage(bl.sprite)
     end
   end
-  
+
   sound_bonk = love.audio.newSource("bonk.mp3", "static")
   sound_oof = love.audio.newSource("oof.mp3", "static")
   music = love.audio.newSource("music.mp3", "stream")
@@ -213,9 +217,9 @@ function love.draw()
   love.graphics.clear(red, green, blue, alpha)
   w = love.graphics.getWidth()   -- window width
   h = love.graphics.getHeight()  -- window height
-  
+
   x = cellsize
- 
+
   mouseXpx = love.mouse.getX()
   mouseX = math.floor(mouseXpx / cellsize)
   mouseYpx = love.mouse.getY()
@@ -223,8 +227,8 @@ function love.draw()
   love.graphics.setColor(1, 0.5, 0.5)
   love.graphics.rectangle("line", mouseX*cellsize, mouseY*cellsize, cellsize, cellsize )
   love.graphics.setColor(1, 1, 1)
- 
- 
+
+
   -- 2d world
   for x = 0, world_w do
     for y = 0, world_h do
@@ -240,7 +244,7 @@ function love.draw()
   for i, mob in pairs(mobs) do
     love.graphics.draw(sprite.cow, cellsize*mob.x, cellsize*mob.y)
   end
-  
+
   --player
   if hitpoints<1 then
     -- dead
@@ -249,9 +253,9 @@ function love.draw()
     else
       love.graphics.draw(rip_stone, cellsize*playerX, cellsize*playerY)
     end
-  elseif run==0 then    
+  elseif run==0 then
     love.graphics.draw(Player, cellsize*playerX, cellsize*playerY )
-  else 
+  else
     love.graphics.draw(Player2, cellsize*playerX, cellsize*playerY )
   end
   --Жижа
@@ -274,24 +278,24 @@ function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
   -- button 1=left, 2=right
   colnum = math.floor(mouseXpx / cellsize)
   rownum = math.floor(mouseYpx / cellsize)
-  
-  if button == 1 then 
+
+  if button == 1 then
     world[colnum][rownum] = world[colnum][rownum] + 1
-  else 
+  else
     if world[colnum][rownum] > 0 then
       world[colnum][rownum] = world[colnum][rownum] - 1
-    end  
+    end
   end
   if world[colnum][rownum] > 5 then
     world[colnum][rownum] = world[colnum][rownum] - 1
-  end  
+  end
 end
 
 function player_tp(targetX, targetY)
   playerX, playerY = targetX, targetY
 end
 
-function love.keypressed( key ) 
+function love.keypressed( key )
   if key == "f9" then
     file = io.open("world.txt", "r")
     -- sets the default output file as test.lua
@@ -302,19 +306,19 @@ function love.keypressed( key )
     hitpoints = io.read("*number")
     for i = 0, world_h-1 do
       for XD = 0, world_w-1 do
-        world[XD][i] = io.read("*number")      
+        world[XD][i] = io.read("*number")
       end
     end
-   
+
     io.close(file)
   end
 
   if gameover then
     return
   end
-  
+
   newX=playerX
-  newY=playerY 
+  newY=playerY
   if key == "d" then
     newX = playerX+1
   end
@@ -359,12 +363,12 @@ function love.keypressed( key )
     -- cant go
     sound_bonk:stop()
     sound_bonk:play()
-    
+
   end
 
   if key == "f5" then
     -- Opens a file in append mode
-    file = io.open("world.txt", "w")    
+    file = io.open("world.txt", "w")
     -- sets the default output file as test.lua
     io.output(file)
     io.write(playerX)
@@ -380,9 +384,9 @@ function love.keypressed( key )
       end
       io.write("\n")
     end
-    
+
     -- closes the open file
     io.close(file)
-  end 
+  end
 end
 --XD
