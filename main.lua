@@ -127,6 +127,17 @@ function love.update(dt)
   if game_seconds > last_tick + 0.1 then
     -- tick
     for i, cow in ipairs(mobs) do
+      if playerX>cow.x then
+        cow.speed_X=1
+      else
+        cow.speed_X=-1  
+      end  
+      
+      if playerY>cow.y then
+        cow.speed_Y=1
+      else
+        cow.speed_Y=-1  
+      end  
       newcowY = cow.y + cow.speed_Y
       newcowX = cow.x + cow.speed_X
       if can_walk(newcowX, newcowY) then
@@ -175,7 +186,10 @@ function love.load()
   die = love.graphics.newImage("gameover.png")
   sprite["cow"] = love.graphics.newImage("cow.png")
   rip_stone = love.graphics.newImage("tomb_cave.png")
-  
+  boss_herht = love.graphics.newImage("1_BOSS_HERHT.png")
+  boss = love.graphics.newImage("1_BOSS.png")
+  boss_sh = love.graphics.newImage("1_BOSS_SH.png")
+  boss_oof = love.graphics.newImage("1_BOSS_OOF.png")
   for i, bl in pairs(blocks) do
     if bl.sprite then
       bl.img = love.graphics.newImage(bl.sprite)
