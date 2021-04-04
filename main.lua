@@ -27,21 +27,26 @@ local blocks = {}
 blocks[0] = { number = 0, set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
 blocks[1] = { number = 1, set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[2] = { number = 2, set_key = "2", sprite = "dirt.png", passable = false, breakable = true, collectable = false, pushable = false }
-blocks[3] = { number = 3, set_key = "3", sprite = "stone.png", passable = false, breakable = false, collectable = false, pushable = false }
+blocks[3] = { number = 3, set_key = "3", sprite = "stone.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[4] = { number = 4, set_key = "4", sprite = "bricks.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[5] = { number = 5, set_key = "5", sprite = "wood.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[6] = { number = 6, set_key = "6", sprite = "background.png", passable = true, breakable = false, collectable = false, pushable = false }
 blocks[9] = { number = 9, set_key = "_", sprite = "sword.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[8] = { number = 8, set_key = "_", sprite = "gold_ore.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[7] = { number = 7, set_key = "_", sprite = "pick.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[10] = { number = 10, set_key = "_", sprite = "sheld.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[11] = { number = 11, set_key = "7", sprite = "pepper.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[12] = { number = 12, set_key = "8", sprite = "myaso.png", passable = true, breakable = false, collectable = true, pushable = false }
 
 local inv = {}
 inv[9]=666
+inv[7]=666
 inv[1]=1
 inv[2]=5
 inv[5]=0
 inv[4]=0
 inv[8]=0
-
+inv[3]=0
 local mobs = {}
 mobs[1] = {x = 5, y = 5, speed_X=-1, speed_Y=0, bonks_left = 15}
 
@@ -194,6 +199,7 @@ function love.load()
   boss = love.graphics.newImage("1_BOSS.png")
   boss_sh = love.graphics.newImage("1_BOSS_SH.png")
   boss_oof = love.graphics.newImage("1_BOSS_OOF.png")
+  
   for i, bl in pairs(blocks) do
     if bl.sprite then
       bl.img = love.graphics.newImage(bl.sprite)
@@ -343,18 +349,39 @@ function love.keypressed( key )
     newcow = {x = mouseX, y = mouseY, speed_X=-1, speed_Y=0, bonks_left = 15}
     table.insert(mobs, newcow)
   end
-
+  
+  item = world[newX][newY]
   if (newX >= 0 and newX<world_w and newY >= 0 and newY<world_h) and blocks[world[newX][newY]].breakable then
     -- FIXME check if inventory entry present
-    inv[world[newX][newY]] = inv[world[newX][newY]] + 1
-    world[newX][newY] = 0
+    if inv[7]>0 then
+      inv[7]=inv[7]-1
+   
+      if inv[item] == nil then
+        inv[item] = 0
+      end
+      if item == 11 then
+        hitpoints=hitpoints+1
+      else  
+        inv[item] = inv[item] + 1
+        world[newX][newY] = 0
+      end  
+    else     
+    end    
   end
 
   if can_walk(newX, newY) then
     player_tp(newX,newY)
     if blocks[world[newX][newY]].collectable then
-      -- add to inventory
-      inv[world[newX][newY]] = inv[world[newX][newY]] + 10
+      if item == 11 or item == 12 then
+        hitpoints=hitpoints+1
+      else  
+        if inv[item] == nil then
+          inv[item] = 0
+        end
+  
+        -- add to inventory
+        inv[item] = inv[item] + 10
+      end  
       world[newX][newY] = 0
     end
     run = 1
@@ -396,6 +423,17 @@ function love.keypressed( key )
         inv[9]=inv[9]+10
       end
     end
-  end    
+  end   
+  if key=="o" then
+    if inv[2]>4 then
+      if inv[5]>0 then
+        inv[2]=inv[2]-5
+        inv[5]=inv[5]-1
+        inv[7]=inv[7]+10
+      end
+    end
+  end     
 end
 --XD
+--stonks
+--LINK
