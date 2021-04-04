@@ -388,5 +388,14 @@ function love.keypressed( key )
     -- closes the open file
     io.close(file)
   end
+  if key=="p" then
+    if inv[8]>4 then
+      if inv[5]>0 then
+        inv[8]=inv[8]-5
+        inv[5]=inv[5]-1
+        inv[9]=inv[9]+10
+      end
+    end
+  end    
 end
 --XD
