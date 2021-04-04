@@ -124,7 +124,7 @@ function love.update(dt)
     end
   end
 
-  if game_seconds > last_tick + 0.1 then
+  if game_seconds > last_tick + 0.3 then
     -- tick
     for i, cow in ipairs(mobs) do
       if playerX>cow.x then
