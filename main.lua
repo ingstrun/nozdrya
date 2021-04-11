@@ -1,8 +1,6 @@
 local playerX = 5
 local playerY = 5
-local accel = 300
 local run = 0
-local mob_run = 0
 local cellsize = 32
 local world_h = 40
 local world_w = 70
@@ -23,7 +21,7 @@ local game_seconds = 0
 local last_tick = 0
 local sprite = {}
 local world = {}
-local blocks = {}
+local blocks = {}         
 blocks[0] = { number = 0, set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
 blocks[1] = { number = 1, set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[2] = { number = 2, set_key = "2", sprite = "dirt.png", passable = false, breakable = true, collectable = false, pushable = false }
@@ -48,8 +46,8 @@ inv[4]=0
 inv[8]=0
 inv[3]=0
 local mobs = {}
-mobs[1] = {x = 5, y = 5, speed_X=-1, speed_Y=0, bonks_left = 15}
-
+mobs[1] = {x = 25, y = 5, speed_X=-1, speed_Y=0, bonks_left = 15, mob_type = "cow"}
+mobs[2] = {x = 25, y = 15, speed_X=-1, speed_Y=0, bonks_left = 66, mob_type = "boss"}
 --горнасть
 function init_world()
   math.randomseed(os.time())
@@ -131,41 +129,53 @@ function love.update(dt)
 
   if game_seconds > last_tick + 0.3 then
     -- tick
-    for i, cow in ipairs(mobs) do
-      if playerX>cow.x then
-        cow.speed_X=1
-      elseif playerX == cow.x then
-        cow.speed_X = 0
+    for i, mob in ipairs(mobs) do
+      if playerX>mob.x then
+        mob.speed_X=1
+      elseif playerX == mob.x then
+        mob.speed_X = 0
       else
-        cow.speed_X=-1
+        mob.speed_X=-1
       end
 
-      if playerY > cow.y then
-        cow.speed_Y=1
-      elseif playerY == cow.y then
-        cow.speed_Y = 0
+      if playerY > mob.y then
+        mob.speed_Y=1
+      elseif playerY == mob.y then
+        mob.speed_Y = 0
       else
-        cow.speed_Y = -1
+        mob.speed_Y = -1
       end
-      newcowY = cow.y + cow.speed_Y
-      newcowX = cow.x + cow.speed_X
-      if can_walk(newcowX, newcowY) then
-        cow.x = cow.x + cow.speed_X
-        cow.y = cow.y + cow.speed_Y
-      else
-        if cow.bonks_left > 0 then
-          sound_bonk:stop()
-          sound_bonk:play()
-          cow.bonks_left = cow.bonks_left -1
+      newcowX = mob.x + mob.speed_X
+      newcowY = mob.y + mob.speed_Y
+      if mob["mob_type"] == "cow" then
+        if can_walk(newcowX, newcowY) then
+          mob.x = mob.x + mob.speed_X
+          mob.y = mob.y + mob.speed_Y
+        else
+          if mob.bonks_left > 0 then
+            sound_bonk:stop()
+            sound_bonk:play()
+            mob.bonks_left = mob.bonks_left -1
+          end
+          mob.speed_X = - mob.speed_X
+          mob.speed_Y = - mob.speed_Y
         end
-        cow.speed_X = - cow.speed_X
-        cow.speed_Y = - cow.speed_Y
-      end
+      else
+        --boss run
+        if (newcowX >= 0 and newcowX<world_w and newcowY >= 0 and newcowY<world_h) and blocks[world[newcowX][newcowY]].breakable then   
+          world[newcowX][newcowY] = 0
+        end  
+        if can_walk(newcowX, newcowY) then          
+          mob.x = newcowX
+          mob.y = newcowY
+        end
+      end  
+     
       last_tick = game_seconds
-      if cow.x == playerX and cow.y == playerY then
+      if mob.x == playerX and mob.y == playerY then
         if inv[9]>0 then
           inv[9]=inv[9]-1
-          -- remove cow
+          -- remove mob
           table.remove (mobs,i)
         else
           hitpoints=hitpoints-1
@@ -196,7 +206,7 @@ function love.load()
   sprite["cow"] = love.graphics.newImage("cow.png")
   rip_stone = love.graphics.newImage("tomb_cave.png")
   boss_herht = love.graphics.newImage("1_BOSS_HERHT.png")
-  boss = love.graphics.newImage("1_BOSS.png")
+  sprite["boss"] = love.graphics.newImage("1_BOSS.png")
   boss_sh = love.graphics.newImage("1_BOSS_SH.png")
   boss_oof = love.graphics.newImage("1_BOSS_OOF.png")
   
@@ -248,7 +258,11 @@ function love.draw()
 
   -- mobs
   for i, mob in pairs(mobs) do
-    love.graphics.draw(sprite.cow, cellsize*mob.x, cellsize*mob.y)
+    if mob ["mob_type"] == "boss" then
+      love.graphics.draw(sprite.boss, cellsize*mob.x-16, cellsize*mob.y-16)
+    else
+      love.graphics.draw(sprite.cow, cellsize*mob.x, cellsize*mob.y)
+    end  
   end
 
   --player
