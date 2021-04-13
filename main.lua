@@ -21,7 +21,8 @@ local game_seconds = 0
 local last_tick = 0
 local sprite = {}
 local world = {}
-local blocks = {}         
+local blocks = {}  
+local boss_live = 30        
 blocks[0] = { number = 0, set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
 blocks[1] = { number = 1, set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[2] = { number = 2, set_key = "2", sprite = "dirt.png", passable = false, breakable = true, collectable = false, pushable = false }
@@ -45,6 +46,7 @@ inv[5]=0
 inv[4]=0
 inv[8]=0
 inv[3]=0
+inv[10]=666
 local mobs = {}
 mobs[1] = {x = 25, y = 5, speed_X=-1, speed_Y=0, bonks_left = 15, mob_type = "cow"}
 mobs[2] = {x = 25, y = 15, speed_X=-1, speed_Y=0, bonks_left = 66, mob_type = "boss"}
@@ -172,11 +174,36 @@ function love.update(dt)
       end  
      
       last_tick = game_seconds
+      damage=1
+      if mob["mob_type"]=="boss" then
+        damage=3
+      end  
       if mob.x == playerX and mob.y == playerY then
-        if inv[9]>0 then
-          inv[9]=inv[9]-1
-          -- remove mob
+        if inv[9]>0 and inv[10]<0 and mob["mob_type"]=="cow" then
+            inv[9]=inv[9]-1
+            hitpoints=hitpoints-damage
+            sound_oof:stop()
+            sound_oof:play()
+            table.remove (mobs,i)
+        elseif mob["mob_type"]=="boss" and inv[9]>0 and inv[10]<0 then
+            boss_live = boss_live-1
+            inv[9]=inv[9]-1
+            hitpoints=hitpoints-damage
+            sound_oof:stop()
+            sound_oof:play()
+        elseif inv[9]>0 and inv[10]>0 and mob["mob_type"]=="cow" then  
+          inv[9]=inv[9]-1 
+          inv[10]=inv[10]-damage 
           table.remove (mobs,i)
+        elseif mob["mob_type"]=="boss" and inv[9]>0 and inv[10]>0 then
+          boss_live = boss_live-1
+          if boss_live<1 then
+            table.remove (mobs,i)
+          end  
+          inv[9]=inv[9]-1
+          inv[10]=inv[10]-damage
+        elseif inv[9]<0 and inv[10]>0 then  
+          inv[10]=inv[10]-damage 
         else
           hitpoints=hitpoints-1
           sound_oof:stop()
@@ -282,7 +309,17 @@ function love.draw()
   for hit=1,hitpoints do
     love.graphics.draw(heart,cellsize*hit,cellsize)
   end
+
+
+
+  --boss ЖИЖА!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  for boss_live=1,boss_live do
+    love.graphics.draw(boss_herht,cellsize*boss_live,cellsize,cellsize*180)
+  end
   e = 2*2
+
+
+
   for what, num in pairs(inv) do
     love.graphics.draw(blocks[what].img,cellsize,cellsize*e)
     love.graphics.print(" x "..inv[what], cellsize*2,cellsize*e, 0, 2)
