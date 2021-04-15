@@ -2,8 +2,10 @@ local playerX = 5
 local playerY = 5
 local run = 0
 local cellsize = 32
-local world_h = 40
-local world_w = 70
+local room_w = 70
+local room_h = 40
+local world_w = 3 * room_w
+local world_h = 5 * room_h
 local dange_h = 9
 local dange_w = 8
 local cave_h = 9
@@ -21,12 +23,12 @@ local game_seconds = 0
 local last_tick = 0
 local sprite = {}
 local world = {}
-local blocks = {}  
-local boss_live = 30        
+local blocks = {}
+local boss_live = 30
 blocks[0] = { number = 0, set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
 blocks[1] = { number = 1, set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[2] = { number = 2, set_key = "2", sprite = "dirt.png", passable = false, breakable = true, collectable = false, pushable = false }
-blocks[3] = { number = 3, set_key = "3", sprite = "stone.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[3] = { number = 3, set_key = "3", sprite = "stone.png", passable = false, breakable = false, collectable = false, pushable = false }
 blocks[4] = { number = 4, set_key = "4", sprite = "bricks.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[5] = { number = 5, set_key = "5", sprite = "wood.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[6] = { number = 6, set_key = "6", sprite = "background.png", passable = true, breakable = false, collectable = false, pushable = false }
@@ -109,6 +111,7 @@ function init_world()
   end
   io.close(file)
 end
+
 function can_walk(x,y)
   return ( x>=0 and x<world_w and y>=0 and y<world_h ) and blocks[world[x][y]].passable
 end
@@ -164,20 +167,20 @@ function love.update(dt)
         end
       else
         --boss run
-        if (newcowX >= 0 and newcowX<world_w and newcowY >= 0 and newcowY<world_h) and blocks[world[newcowX][newcowY]].breakable then   
+        if (newcowX >= 0 and newcowX<world_w and newcowY >= 0 and newcowY<world_h) and blocks[world[newcowX][newcowY]].breakable then
           world[newcowX][newcowY] = 0
-        end  
-        if can_walk(newcowX, newcowY) then          
+        end
+        if can_walk(newcowX, newcowY) then
           mob.x = newcowX
           mob.y = newcowY
         end
-      end  
-     
+      end
+
       last_tick = game_seconds
       damage=1
       if mob["mob_type"]=="boss" then
         damage=3
-      end  
+      end
       if mob.x == playerX and mob.y == playerY then
         if inv[9]>0 and inv[10]<0 and mob["mob_type"]=="cow" then
             inv[9]=inv[9]-1
@@ -191,21 +194,21 @@ function love.update(dt)
             hitpoints=hitpoints-damage
             sound_oof:stop()
             sound_oof:play()
-        elseif inv[9]>0 and inv[10]>0 and mob["mob_type"]=="cow" then  
-          inv[9]=inv[9]-1 
-          inv[10]=inv[10]-damage 
+        elseif inv[9]>0 and inv[10]>0 and mob["mob_type"]=="cow" then
+          inv[9]=inv[9]-1
+          inv[10]=inv[10]-damage
           table.remove (mobs,i)
         elseif mob["mob_type"]=="boss" and inv[9]>0 and inv[10]>0 then
           boss_live = boss_live-1
           if boss_live<1 then
             table.remove (mobs,i)
-          end  
+          end
           inv[9]=inv[9]-1
           inv[10]=inv[10]-damage
-        elseif inv[9]<0 and inv[10]>0 then  
-          inv[10]=inv[10]-damage 
+        elseif inv[9]<0 and inv[10]>0 then
+          inv[10]=inv[10]-damage
         else
-          hitpoints=hitpoints-1
+          hitpoints=hitpoints-damage
           sound_oof:stop()
           sound_oof:play()
         end
@@ -223,7 +226,7 @@ end
 function love.load()
   init_world()
   love.window.setTitle("Ноздря")
-  love.window.setMode(cellsize * world_w, cellsize * world_h)
+  love.window.setMode(cellsize * room_w, cellsize * room_h)
 
   Player = love.graphics.newImage("burger.png")
   Player2 = love.graphics.newImage("burger2.png")
@@ -236,7 +239,7 @@ function love.load()
   sprite["boss"] = love.graphics.newImage("1_BOSS.png")
   boss_sh = love.graphics.newImage("1_BOSS_SH.png")
   boss_oof = love.graphics.newImage("1_BOSS_OOF.png")
-  
+
   for i, bl in pairs(blocks) do
     if bl.sprite then
       bl.img = love.graphics.newImage(bl.sprite)
@@ -257,6 +260,8 @@ function love.draw()
 
   -- love.graphics.setBackgroundColor( red, green, blue, alpha)
 
+  this_room_start_x = room_w * math.floor(playerX/room_w)
+  this_room_start_y = room_h * math.floor(playerY/room_h)
   love.graphics.clear(red, green, blue, alpha)
   w = love.graphics.getWidth()   -- window width
   h = love.graphics.getHeight()  -- window height
@@ -273,38 +278,40 @@ function love.draw()
 
 
   -- 2d world
-  for x = 0, world_w do
-    for y = 0, world_h do
-      sprite_to_draw = blocks[ world[x][y] ].img
+  for x = 0, room_w do
+    for y = 0, room_h do
+      sprite_to_draw = blocks[ world[this_room_start_x+x][this_room_start_y+y] ].img
       if sprite_to_draw then
         love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
       end
-      --love.graphics.print(world[x][y], cellsize*x, cellsize*y)
     end
   end
 
   -- mobs
   for i, mob in pairs(mobs) do
     if mob ["mob_type"] == "boss" then
-      love.graphics.draw(sprite.boss, cellsize*mob.x-16, cellsize*mob.y-16)
+      love.graphics.draw(sprite.boss, cellsize*(mob.x-this_room_start_x)-16, cellsize*(mob.y-this_room_start_y)-16)
     else
-      love.graphics.draw(sprite.cow, cellsize*mob.x, cellsize*mob.y)
-    end  
+      love.graphics.draw(sprite.cow, cellsize * (mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
+    end
   end
 
   --player
+  player_sprite = Player
   if hitpoints<1 then
     -- dead
     if playerY<30 then
-      love.graphics.draw(rip, cellsize*playerX, cellsize*playerY)
+      player_sprite = rip
     else
-      love.graphics.draw(rip_stone, cellsize*playerX, cellsize*playerY)
+      player_sprite = rip_stone
     end
   elseif run==0 then
-    love.graphics.draw(Player, cellsize*playerX, cellsize*playerY )
+    player_sprite = Player
   else
-    love.graphics.draw(Player2, cellsize*playerX, cellsize*playerY )
+    player_sprite = Player2
   end
+  love.graphics.draw(player_sprite, cellsize*(playerX-this_room_start_x), cellsize*(playerY-this_room_start_y) )
+
   --Жижа
   for hit=1,hitpoints do
     love.graphics.draw(heart,cellsize*hit,cellsize)
@@ -400,39 +407,40 @@ function love.keypressed( key )
     newcow = {x = mouseX, y = mouseY, speed_X=-1, speed_Y=0, bonks_left = 15}
     table.insert(mobs, newcow)
   end
-  
-  item = world[newX][newY]
+
   if (newX >= 0 and newX<world_w and newY >= 0 and newY<world_h) and blocks[world[newX][newY]].breakable then
+    item = world[newX][newY]
     -- FIXME check if inventory entry present
     if inv[7]>0 then
       inv[7]=inv[7]-1
-   
+
       if inv[item] == nil then
         inv[item] = 0
       end
       if item == 11 then
         hitpoints=hitpoints+1
-      else  
+      else
         inv[item] = inv[item] + 1
         world[newX][newY] = 0
-      end  
-    else     
-    end    
+      end
+    else
+    end
   end
 
   if can_walk(newX, newY) then
+    item = world[newX][newY]
     player_tp(newX,newY)
     if blocks[world[newX][newY]].collectable then
       if item == 11 or item == 12 then
         hitpoints=hitpoints+1
-      else  
+      else
         if inv[item] == nil then
           inv[item] = 0
         end
-  
+
         -- add to inventory
         inv[item] = inv[item] + 10
-      end  
+      end
       world[newX][newY] = 0
     end
     run = 1
@@ -474,7 +482,7 @@ function love.keypressed( key )
         inv[9]=inv[9]+10
       end
     end
-  end   
+  end
   if key=="o" then
     if inv[2]>4 then
       if inv[5]>0 then
@@ -483,7 +491,7 @@ function love.keypressed( key )
         inv[7]=inv[7]+10
       end
     end
-  end     
+  end
 end
 --XD
 --stonks
