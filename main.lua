@@ -126,9 +126,9 @@ function love.update(dt)
   mouseYpx = love.mouse.getY()
   mouseY = math.floor(mouseYpx / cellsize)
 
-  for i, bl in pairs(blocks) do
+  for i, bl in pairs(blocks) do   
     if love.keyboard.isDown( bl.set_key ) then
-      world[mouseX][mouseY] = i
+      world[this_room_start_x+mouseX][this_room_start_y+mouseY] = i
     end
   end
 
