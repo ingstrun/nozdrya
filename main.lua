@@ -25,6 +25,7 @@ local sprite = {}
 local world = {}
 local blocks = {}
 local boss_live = 30
+game_mode = "mainmenu"
 blocks[0] = { number = 0, set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
 blocks[1] = { number = 1, set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[2] = { number = 2, set_key = "2", sprite = "dirt.png", passable = false, breakable = true, collectable = false, pushable = false }
@@ -117,6 +118,9 @@ function can_walk(x,y)
 end
 
 function love.update(dt)
+  if game_mode == "mainmenu" then
+    return
+  end    
   gameover = hitpoints<1
 
   game_seconds = game_seconds + dt
@@ -239,6 +243,7 @@ function love.load()
   sprite["boss"] = love.graphics.newImage("1_BOSS.png")
   boss_sh = love.graphics.newImage("1_BOSS_SH.png")
   boss_oof = love.graphics.newImage("1_BOSS_OOF.png")
+  nose = love.graphics.newImage("nozdrya.jpg")
 
   for i, bl in pairs(blocks) do
     if bl.sprite then
@@ -287,6 +292,8 @@ function love.draw()
     end
   end
 
+  love.graphics.print(game_mode, cellsize*10,cellsize*10, 0, 2)
+
   -- mobs
   for i, mob in pairs(mobs) do
     if mob ["mob_type"] == "boss" then
@@ -333,8 +340,14 @@ function love.draw()
     e = e+2
   end
   if gameover then
-    love.graphics.draw(die,world_w*32/2-die:getWidth()/2,world_h*32/2-die:getHeight()/2-100)
- end
+    love.graphics.draw(die,room_w*32/2-die:getWidth()/2,room_h*32/2-die:getHeight()/2-100)
+  end
+  if game_mode == "mainmenu" then
+    a = nose:getWidth()/2
+    b = room_w * cellsize
+    cx = (b-a)/2
+    love.graphics.draw(nose, cx ,0 , 0, 0.5) 
+  end
 end
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
@@ -360,6 +373,15 @@ function player_tp(targetX, targetY)
 end
 
 function love.keypressed( key )
+
+  if key == "escape" then
+    if  game_mode == "mainmenu" then   
+      game_mode = "play"
+    else
+      game_mode = "mainmenu" 
+    end    
+  end
+
   if key == "f9" then
     file = io.open("world.txt", "r")
     -- sets the default output file as test.lua
@@ -376,11 +398,13 @@ function love.keypressed( key )
 
     io.close(file)
   end
-
+  if game_mode == "mainmenu" then
+    return
+  end
   if gameover then
     return
   end
-
+  
   newX=playerX
   newY=playerY
   if key == "d" then
