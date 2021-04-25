@@ -428,7 +428,7 @@ function love.keypressed( key )
   mouseY = math.floor(mouseYpx / cellsize)
 
   if key == "c" then
-    newcow = {x = mouseX, y = mouseY, speed_X=-1, speed_Y=0, bonks_left = 15}
+    newcow = {x = mouseX+this_room_start_x, y = mouseY+this_room_start_y, speed_X=-1, speed_Y=0, bonks_left = 15}
     table.insert(mobs, newcow)
   end
 
