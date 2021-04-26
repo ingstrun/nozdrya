@@ -10,6 +10,8 @@ local dange_h = 9
 local dange_w = 8
 local cave_h = 9
 local cave_w = 9
+local cave2_h = 11
+local cave2_w = 19
 local tree_h = 2
 local tree_w = 8
 local time_start_run = 0
@@ -73,6 +75,19 @@ function init_world()
     end
   end
   --dange
+  
+
+  file = io.open("cave 2", "r")
+  -- sets the default output file as test.lua
+  io.input(file)
+    cave2X=math.random(0,world_w-cave2_w)
+    cave2Y=math.random(23,world_h-cave2_h)
+  for i = 0, cave2_h-1 do
+    for XD = 0, cave2_w-1 do
+      world[XD+cave2X][i+cave2Y] = io.read("*number")
+    end
+  end
+  io.close(file)
   dangeX=math.random(0,world_w-dange_w)
   dangeY=math.random(23,world_h-dange_h)
 
