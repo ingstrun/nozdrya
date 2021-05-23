@@ -31,7 +31,7 @@ game_mode = "mainmenu"
 blocks[0] = { number = 0, set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
 blocks[1] = { number = 1, set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[2] = { number = 2, set_key = "2", sprite = "dirt.png", passable = false, breakable = true, collectable = false, pushable = false }
-blocks[3] = { number = 3, set_key = "3", sprite = "stone.png", passable = false, breakable = false, collectable = false, pushable = false }
+blocks[3] = { number = 3, set_key = "3", sprite = "stone.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[4] = { number = 4, set_key = "4", sprite = "bricks.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[5] = { number = 5, set_key = "5", sprite = "wood.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[6] = { number = 6, set_key = "6", sprite = "background.png", passable = true, breakable = false, collectable = false, pushable = false }
@@ -273,12 +273,19 @@ function love.load()
 end
 
 function love.draw()
-  red = 13/100
-  green = 68/100
-  blue = 96/100
-  alpha = 0/100
+  if game_seconds%15<10 then
+    red = 13/100
+    green = 68/100
+    blue = 96/100
+    alpha = 0/100  
+  else
+    red = 11/100
+    green = 12/100
+    blue = 29/100
+    alpha = 0/100
+  end
 
-  -- love.graphics.setBackgroundColor( red, green, blue, alpha)
+  love.graphics.setBackgroundColor( red, green, blue, alpha)
 
   this_room_start_x = room_w * math.floor(playerX/room_w)
   this_room_start_y = room_h * math.floor(playerY/room_h)
@@ -306,7 +313,7 @@ function love.draw()
       end
     end
   end
-
+  love.graphics.print(game_seconds%15, cellsize*10,cellsize*11, 0, 2)
   love.graphics.print(game_mode, cellsize*10,cellsize*10, 0, 2)
 
   -- mobs
