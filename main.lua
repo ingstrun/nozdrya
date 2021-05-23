@@ -259,7 +259,8 @@ function love.load()
   boss_sh = love.graphics.newImage("1_BOSS_SH.png")
   boss_oof = love.graphics.newImage("1_BOSS_OOF.png")
   nose = love.graphics.newImage("nozdrya.jpg")
-
+  moon = love.graphics.newImage("moon.png")
+  sun = love.graphics.newImage("sun.png")
   for i, bl in pairs(blocks) do
     if bl.sprite then
       bl.img = love.graphics.newImage(bl.sprite)
@@ -273,18 +274,22 @@ function love.load()
 end
 
 function love.draw()
-  if game_seconds%15<10 then
+  local sunnight = sun and night
+  if game_seconds%10<5 then
+    sunnight = sun
     red = 13/100
     green = 68/100
     blue = 96/100
     alpha = 0/100  
   else
+    sunnight = moon
     red = 11/100
     green = 12/100
     blue = 29/100
     alpha = 0/100
   end
-
+  
+  
   love.graphics.setBackgroundColor( red, green, blue, alpha)
 
   this_room_start_x = room_w * math.floor(playerX/room_w)
@@ -313,7 +318,7 @@ function love.draw()
       end
     end
   end
-  love.graphics.print(game_seconds%15, cellsize*10,cellsize*11, 0, 2)
+  love.graphics.print(game_seconds%10, cellsize*10,cellsize*11, 0, 2)
   love.graphics.print(game_mode, cellsize*10,cellsize*10, 0, 2)
 
   -- mobs
@@ -353,7 +358,7 @@ function love.draw()
     love.graphics.draw(boss_herht,cellsize*boss_live,cellsize,cellsize*180)
   end
   e = 2*2
-
+  love.graphics.draw(sunnight,cellsize*25,cellsize*3)
 
 
   for what, num in pairs(inv) do
