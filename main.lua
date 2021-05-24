@@ -133,6 +133,7 @@ function can_walk(x,y)
 end
 
 function love.update(dt)
+
   if game_mode == "mainmenu" then
     return
   end    
@@ -275,7 +276,9 @@ end
 
 function love.draw()
   local sunnight = sun and night
-  if game_seconds%10<5 then
+  local day_plus_night = 60
+  local daytime = game_seconds % day_plus_night
+  if daytime < day_plus_night / 2 then
     sunnight = sun
     red = 13/100
     green = 68/100
@@ -318,7 +321,7 @@ function love.draw()
       end
     end
   end
-  love.graphics.print(game_seconds%10, cellsize*10,cellsize*11, 0, 2)
+  
   love.graphics.print(game_mode, cellsize*10,cellsize*10, 0, 2)
 
   -- mobs
@@ -357,10 +360,13 @@ function love.draw()
   for boss_live=1,boss_live do
     love.graphics.draw(boss_herht,cellsize*boss_live,cellsize,cellsize*180)
   end
+
+  -- SUN!
+  local sunpos = ( game_seconds % (day_plus_night / 2) ) / (day_plus_night / 2)
+  love.graphics.print(sunpos, cellsize*10,cellsize*11, 0, 2)
+  love.graphics.draw(sunnight,sunpos*room_w*cellsize,cellsize*3)
+
   e = 2*2
-  love.graphics.draw(sunnight,cellsize*25,cellsize*3)
-
-
   for what, num in pairs(inv) do
     love.graphics.draw(blocks[what].img,cellsize,cellsize*e)
     love.graphics.print(" x "..inv[what], cellsize*2,cellsize*e, 0, 2)
