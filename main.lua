@@ -262,6 +262,9 @@ function love.load()
   nose = love.graphics.newImage("nozdrya.jpg")
   moon = love.graphics.newImage("moon.png")
   sun = love.graphics.newImage("sun.png")
+  trap_1 = love.graphics.newImage("its a trap!.png")
+  trap_2 = love.graphics.newImage("its a trap! 2 .png")
+  swordup = love.graphics.newImage("swordup.png")
   for i, bl in pairs(blocks) do
     if bl.sprite then
       bl.img = love.graphics.newImage(bl.sprite)
@@ -333,6 +336,10 @@ function love.draw()
     end
   end
 
+  love.graphics.draw(swordup, cellsize*(playerX-this_room_start_x), cellsize*(playerY-1-this_room_start_y) )
+  love.graphics.draw(swordup, cellsize*(playerX-this_room_start_x), cellsize*(playerY+1-this_room_start_y), math.rad(180), 1, 1, 32, 32 )
+  love.graphics.draw(swordup, cellsize*(playerX-1-this_room_start_x), cellsize*(playerY-this_room_start_y), math.rad(270), 1, 1, 32, 0 )
+  love.graphics.draw(swordup, cellsize*(playerX+1-this_room_start_x), cellsize*(playerY-this_room_start_y), math.rad(90), 1, 1, 0, 32  )
   --player
   player_sprite = Player
   if hitpoints<1 then
