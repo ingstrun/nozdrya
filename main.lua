@@ -276,7 +276,7 @@ end
 
 function love.draw()
   local sunnight = sun and night
-  local day_plus_night = 60
+  local day_plus_night = 240
   local daytime = game_seconds % day_plus_night
   if daytime < day_plus_night / 2 then
     sunnight = sun
