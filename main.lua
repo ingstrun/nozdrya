@@ -324,7 +324,7 @@ function love.draw()
       block_to_draw = blocks[ world[this_room_start_x+x][this_room_start_y+y] ]
       sprite_to_draw = block_to_draw.img
       if block_to_draw.sprite == "water.png" then
-        quad = love.graphics.newQuad( 0, 0, 32, 32, sprite_to_draw )
+        quad = love.graphics.newQuad( math.floor(game_seconds*30) % 32, 0, 32, 32, sprite_to_draw )
         love.graphics.draw(sprite_to_draw, quad, cellsize*x, cellsize*y)
       elseif sprite_to_draw then
         love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
