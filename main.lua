@@ -42,6 +42,7 @@ blocks[7] = { number = 7, set_key = "_", sprite = "pick.png", passable = true, b
 blocks[10] = { number = 10, set_key = "_", sprite = "sheld.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[11] = { number = 11, set_key = "7", sprite = "pepper.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[12] = { number = 12, set_key = "8", sprite = "myaso.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[13] = { number = 13, set_key = "9", sprite = "water.png", passable = true, breakable = false, collectable = true, pushable = false }
 
 local inv = {}
 inv[9]=666
@@ -76,7 +77,7 @@ function init_world()
     end
   end
   --dange
-
+  
 
   file = io.open("cave 2", "r")
   -- sets the default output file as test.lua
@@ -134,10 +135,10 @@ function can_walk(x,y)
 end
 
 function love.update(dt)
-
+  
   if game_mode == "mainmenu" then
     return
-  end
+  end    
   gameover = hitpoints<1
 
   game_seconds = game_seconds + dt
@@ -147,7 +148,7 @@ function love.update(dt)
   mouseYpx = love.mouse.getY()
   mouseY = math.floor(mouseYpx / cellsize)
 
-  for i, bl in pairs(blocks) do
+  for i, bl in pairs(blocks) do   
     if love.keyboard.isDown( bl.set_key ) then
       world[this_room_start_x+mouseX][this_room_start_y+mouseY] = i
     end
@@ -288,7 +289,7 @@ function love.draw()
     red = 13/100
     green = 68/100
     blue = 96/100
-    alpha = 0/100
+    alpha = 0/100  
   else
     sunnight = moon
     red = 11/100
@@ -296,8 +297,8 @@ function love.draw()
     blue = 29/100
     alpha = 0/100
   end
-
-
+  
+  
   love.graphics.setBackgroundColor( red, green, blue, alpha)
 
   this_room_start_x = room_w * math.floor(playerX/room_w)
@@ -320,13 +321,17 @@ function love.draw()
   -- 2d world
   for x = 0, room_w do
     for y = 0, room_h do
-      sprite_to_draw = blocks[ world[this_room_start_x+x][this_room_start_y+y] ].img
-      if sprite_to_draw then
+      block_to_draw = blocks[ world[this_room_start_x+x][this_room_start_y+y] ]
+      sprite_to_draw = block_to_draw.img
+      if block_to_draw.sprite == "water.png" then
+        quad = love.graphics.newQuad( 0, 0, 32, 32, sprite_to_draw )
+        love.graphics.draw(sprite_to_draw, quad, cellsize*x, cellsize*y)
+      elseif sprite_to_draw then
         love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
       end
     end
   end
-
+  
   love.graphics.print(game_mode, cellsize*10,cellsize*10, 0, 2)
   love.graphics.print(storona, cellsize*12,cellsize*10, 0, 2)
   -- mobs
@@ -337,8 +342,8 @@ function love.draw()
       love.graphics.draw(sprite.cow, cellsize * (mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
     end
   end
-
-  if storona == "up" then
+  
+  if storona == "up" then 
     love.graphics.draw(swordup, cellsize*(playerX-this_room_start_x), cellsize*(playerY-1-this_room_start_y) )
   elseif storona == "down" then
     love.graphics.draw(swordup, cellsize*(playerX-this_room_start_x), cellsize*(playerY+1-this_room_start_y), math.rad(180), 1, 1, 32, 32 )
@@ -393,7 +398,7 @@ function love.draw()
     a = nose:getWidth()/2
     b = room_w * cellsize
     cx = (b-a)/2
-    love.graphics.draw(nose, cx ,0 , 0, 0.5)
+    love.graphics.draw(nose, cx ,0 , 0, 0.5) 
   end
 end
 
@@ -422,11 +427,11 @@ end
 function love.keypressed( key )
 
   if key == "escape" then
-    if  game_mode == "mainmenu" then
+    if  game_mode == "mainmenu" then   
       game_mode = "play"
     else
-      game_mode = "mainmenu"
-    end
+      game_mode = "mainmenu" 
+    end    
   end
 
   if key == "f9" then
@@ -451,7 +456,7 @@ function love.keypressed( key )
   if gameover then
     return
   end
-
+  
   newX=playerX
   newY=playerY
   if key == "d" then
@@ -466,10 +471,10 @@ function love.keypressed( key )
   if key == "s" then
     newY = playerY+1
   end
-  if key == "g" then
+  if key == "g" then 
     init_world()
   end
-
+  
   if key == "up" then
     storona = "up"
   elseif key == "down" then
@@ -478,9 +483,9 @@ function love.keypressed( key )
     storona = "left"
   elseif key == "right" then
     storona = "right"
-  end
+  end  
   print("storona =", storona, "key =", key)
-
+  
   mouseXpx = love.mouse.getX()
   mouseX = math.floor(mouseXpx / cellsize)
   mouseYpx = love.mouse.getY()
