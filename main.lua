@@ -43,7 +43,7 @@ blocks[10] = { number = 10, set_key = "_", sprite = "sheld.png", passable = true
 blocks[11] = { number = 11, set_key = "7", sprite = "pepper.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[12] = { number = 12, set_key = "8", sprite = "myaso.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[13] = { number = 13, set_key = "9", sprite = "water.png", passable = true, breakable = false, collectable = true, pushable = false }
-
+blocks[14] = { number = 14, set_key = "/", sprite = "chest.png", passable = false, breakable = false, collectable = false, pushable = true }
 local inv = {}
 inv[9]=666
 inv[7]=666
@@ -514,6 +514,15 @@ function love.keypressed( key )
     else
     end
   end
+
+  if blocks[world[newX][newY]].pushable then
+    newX2 = newX+newX-playerX
+    newY2 = newY+newY-playerY 
+    if world[newX2][newY2]==0 then
+      world[newX2][newY2]=world[newX][newY]
+      world[newX][newY]=0
+    end   
+  end  
 
   if can_walk(newX, newY) then
     item = world[newX][newY]
