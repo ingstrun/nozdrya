@@ -44,6 +44,9 @@ blocks[11] = { number = 11, set_key = "7", sprite = "pepper.png", passable = tru
 blocks[12] = { number = 12, set_key = "8", sprite = "myaso.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[13] = { number = 13, set_key = "9", sprite = "water.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[14] = { number = 14, set_key = "/", sprite = "chest.png", passable = false, breakable = false, collectable = false, pushable = true }
+for bombs = 15,25 do
+  blocks[bombs] = { number = bombs, set_key = ".", sprite = "TNTboom.png", passable = false, breakable = false, collectable = false, pushable = true } 
+end  
 local inv = {}
 inv[9]=666
 inv[7]=666
@@ -198,6 +201,15 @@ function love.update(dt)
           mob.y = newcowY
         end
       end
+      -- done with mobs
+
+      for x = 0, world_w do
+        for y = 0, world_h do
+          if world[x][y] >=15 and world[x][y] <=25 then
+            world[x][y]=world[x][y]-1
+          end
+        end
+      end
 
       last_tick = game_seconds
       damage=1
@@ -326,9 +338,13 @@ function love.draw()
       if block_to_draw.sprite == "water.png" then
         quad = love.graphics.newQuad( math.floor(game_seconds*30) % 32, 0, 32, 32, sprite_to_draw )
         love.graphics.draw(sprite_to_draw, quad, cellsize*x, cellsize*y)
+      elseif block_to_draw.number >=15 and block_to_draw.number <=25 then
+        love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
+        love.graphics.print(block_to_draw.number-15,cellsize*x, cellsize*y )
       elseif sprite_to_draw then
         love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
       end
+      
     end
   end
   
