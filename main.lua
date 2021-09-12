@@ -44,7 +44,9 @@ blocks[11] = { number = 11, set_key = "7", sprite = "pepper.png", passable = tru
 blocks[12] = { number = 12, set_key = "8", sprite = "myaso.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[13] = { number = 13, set_key = "9", sprite = "water.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[14] = { number = 14, set_key = "/", sprite = "chest.png", passable = false, breakable = false, collectable = false, pushable = true }
-for bombs = 15,25 do
+blocks[15] = { number = 15, set_key = "=", sprite = "Boom1.png", passable = true, breakable = false, collectable = false, pushable = false }
+blocks[16] = { number = 16, set_key = "=", sprite = "Boom2.png", passable = true, breakable = false, collectable = false, pushable = false }
+for bombs = 17,25 do
   blocks[bombs] = { number = bombs, set_key = ".", sprite = "TNTboom.png", passable = false, breakable = false, collectable = false, pushable = true } 
 end  
 local inv = {}
@@ -160,6 +162,7 @@ function love.update(dt)
   if game_seconds > last_tick + 0.3 then
     -- tick
     storona = 0
+    
     for i, mob in ipairs(mobs) do
       if playerX>mob.x then
         mob.speed_X=1
@@ -201,17 +204,6 @@ function love.update(dt)
           mob.y = newcowY
         end
       end
-      -- done with mobs
-
-      for x = 0, world_w do
-        for y = 0, world_h do
-          if world[x][y] >=15 and world[x][y] <=25 then
-            world[x][y]=world[x][y]-1
-          end
-        end
-      end
-
-      last_tick = game_seconds
       damage=1
       if mob["mob_type"]=="boss" then
         damage=3
@@ -249,6 +241,25 @@ function love.update(dt)
         end
       end
     end
+    -- done with mobs
+
+    -- bomb update
+    for x = 0, world_w do
+      for y = 0, world_h do
+        if world[x][y]==15 then
+          world[x][y]=0
+        elseif world[x][y] >15 and world[x][y] <=25 then
+          world[x][y]=world[x][y]-1
+          if world[x][y]==16 then
+            sound_boom:play()  
+          end  
+        end
+      end
+    end
+
+    last_tick = game_seconds
+    
+
   end
 
   now = love.timer.getTime()
@@ -285,11 +296,11 @@ function love.load()
       bl.img = love.graphics.newImage(bl.sprite)
     end
   end
-
+  sound_boom = love.audio.newSource("boom.ogg", "static")
   sound_bonk = love.audio.newSource("bonk.mp3", "static")
   sound_oof = love.audio.newSource("oof.mp3", "static")
   music = love.audio.newSource("music.mp3", "stream")
-  love.audio.play(music)
+  --love.audio.play(music)
 end
 
 function love.draw()
