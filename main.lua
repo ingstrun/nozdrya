@@ -49,6 +49,8 @@ blocks[16] = { number = 16, set_key = "=", sprite = "Boom2.png", passable = true
 for bombs = 17,25 do
   blocks[bombs] = { number = bombs, set_key = ".", sprite = "TNTboom.png", passable = false, breakable = false, collectable = false, pushable = true } 
 end  
+blocks[26] = { number = 26, set_key = "\\", sprite = "leaves.png", passable = true, breakable = true, collectable = true, pushable = false }
+
 local inv = {}
 inv[9]=666
 inv[7]=666
