@@ -64,6 +64,17 @@ inv[10]=666
 local mobs = {}
 mobs[1] = {x = 25, y = 5, speed_X=-1, speed_Y=0, bonks_left = 15, mob_type = "cow"}
 mobs[2] = {x = 25, y = 15, speed_X=-1, speed_Y=0, bonks_left = 66, mob_type = "boss"}
+
+function explosion(x,y,exbl)
+  for ex=x-5,x+5 do
+    for ey=y-5,y+5 do
+      world[ex][ey] = exbl
+    end  
+  end
+    
+  world[x][y] = 1
+end
+
 --горнасть
 function init_world()
   math.randomseed(os.time())
@@ -135,6 +146,8 @@ function init_world()
     end
   end
   io.close(file)
+
+  explosion(10,10,16)
 end
 
 function can_walk(x,y)
@@ -253,6 +266,7 @@ function love.update(dt)
         elseif world[x][y] >15 and world[x][y] <=25 then
           world[x][y]=world[x][y]-1
           if world[x][y]==16 then
+            explosion(x,y,16)
             sound_boom:play()  
           end  
         end
