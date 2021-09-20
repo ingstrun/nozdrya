@@ -364,7 +364,7 @@ function love.draw()
   -- mobs
   for i, mob in pairs(mobs) do
     if mob ["mob_type"] == "boss" then
-      love.graphics.draw(sprite.boss, cellsize*(mob.x-this_room_start_x)-16, cellsize*(mob.y-this_room_start_y)-16)
+      love.graphics.draw(sprite.boss, cellsize*(mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
     else
       love.graphics.draw(sprite.cow, cellsize * (mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
     end
@@ -607,11 +607,12 @@ function love.keypressed( key )
       end
     end
   end
+  --кирки
   if key=="o" then
     if inv[2]>4 then
       if inv[5]>0 then
         inv[2]=inv[2]-5
-        inv[5]=inv[5]-1
+        inv[8]=inv[8]-1
         inv[7]=inv[7]+10
       end
     end
