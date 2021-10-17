@@ -26,7 +26,7 @@ local last_tick = 0
 local sprite = {}
 local world = {}
 local blocks = {}
-local boss_live = 30
+local boss_live = 10
 local storona = 0
 game_mode = "mainmenu"
 blocks[0] = { number = 0, set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
@@ -134,19 +134,20 @@ function init_world()
     end
   end
   io.close(file)
+  tree_number=3
+  for room_number=0, tree_number-1 do
+    file = io.open("tree","r")
+    io.input(file)
+    treeX=math.random(room_w*room_number, room_w*(room_number+1)-1-tree_w)
+    treeY=12
 
-  file = io.open("tree","r")
-  io.input(file)
-  treeX=math.random(0,room_w-tree_w)
-  treeY=12
-
-  for i = 0, tree_h-1 do
-    for XD = 0, tree_w-1 do
-      world[XD+treeX][i+treeY] = io.read("*number")
+    for i = 0, tree_h-1 do
+      for XD = 0, tree_w-1 do
+        world[XD+treeX][i+treeY] = io.read("*number")
+      end
     end
+    io.close(file)
   end
-  io.close(file)
-
   explosion(10,10,16)
 end
 
