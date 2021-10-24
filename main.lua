@@ -64,7 +64,7 @@ inv[10]=666
 local mobs = {}
 mobs[1] = {x = 25, y = 5, speed_X=-1, speed_Y=0, bonks_left = 15, mob_type = "cow"}
 mobs[2] = {x = 25, y = 15, speed_X=-1, speed_Y=0, bonks_left = 66, mob_type = "boss"}
-
+mobs[3] = {x = 25, y = 10, speed_X=-1, speed_Y=0, bonks_left = 15, mob_type = "pig"}
 function explosion(x,y,exbl)
   for ex=x-5,x+5 do
     for ey=y-5,y+5 do
@@ -195,30 +195,43 @@ function love.update(dt)
       else
         mob.speed_Y = -1
       end
-      newcowX = mob.x + mob.speed_X
-      newcowY = mob.y + mob.speed_Y
       if mob["mob_type"] == "cow" then
-        if can_walk(newcowX, newcowY) then
-          mob.x = mob.x + mob.speed_X
-          mob.y = mob.y + mob.speed_Y
+        newmobX = mob.x + mob.speed_X
+        newmobY = mob.y + mob.speed_Y
+        if can_walk(newmobX, newmobY) then
+          mob.x = newmobX
+          mob.y = newmobY
         else
           if mob.bonks_left > 0 then
             sound_bonk:stop()
             sound_bonk:play()
             mob.bonks_left = mob.bonks_left -1
           end
-          mob.speed_X = - mob.speed_X
-          mob.speed_Y = - mob.speed_Y
         end
-      else
+      elseif mob["mob_type"] == "boss" then
         --boss run
-        if (newcowX >= 0 and newcowX<world_w and newcowY >= 0 and newcowY<world_h) and blocks[world[newcowX][newcowY]].breakable then
-          world[newcowX][newcowY] = 0
+        newmobX = mob.x + mob.speed_X
+        newmobY = mob.y + mob.speed_Y
+        if (newmobX >= 0 and newmobX<world_w and newmobY >= 0 and newmobY<world_h) and blocks[world[newmobX][newmobY]].breakable then
+          world[newmobX][newmobY] = 0
         end
-        if can_walk(newcowX, newcowY) then
-          mob.x = newcowX
-          mob.y = newcowY
+        if can_walk(newmobX, newmobY) then
+          mob.x = newmobX
+          mob.y = newmobY
         end
+      elseif mob["mob_type"] == "pig" then
+        newmobX = mob.x - mob.speed_X
+        newmobY = mob.y - mob.speed_Y
+        if can_walk(newmobX, newmobY) then
+          mob.x = newmobX
+          mob.y = newmobY
+        else
+          if mob.bonks_left > 0 then
+            sound_bonk:stop()
+            sound_bonk:play()
+            mob.bonks_left = mob.bonks_left -1
+          end
+        end  
       end
       damage=1
       if mob["mob_type"]=="boss" then
@@ -297,6 +310,7 @@ function love.load()
   rip = love.graphics.newImage("tomb.png")
   die = love.graphics.newImage("gameover.png")
   sprite["cow"] = love.graphics.newImage("cow.png")
+  sprite["pig"] = love.graphics.newImage("pig.png")
   rip_stone = love.graphics.newImage("tomb_cave.png")
   boss_herht = love.graphics.newImage("1_BOSS_HERHT.png")
   sprite["boss"] = love.graphics.newImage("1_BOSS.png")
@@ -382,8 +396,10 @@ function love.draw()
   for i, mob in pairs(mobs) do
     if mob ["mob_type"] == "boss" then
       love.graphics.draw(sprite.boss, cellsize*(mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
-    else
+    elseif mob ["mob_type"] == "cow" then
       love.graphics.draw(sprite.cow, cellsize * (mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
+    elseif mob ["mob_type"] == "pig" then
+      love.graphics.draw(sprite.pig, cellsize * (mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
     end
   end
   
