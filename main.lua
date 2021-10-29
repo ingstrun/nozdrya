@@ -21,6 +21,7 @@ local offset = 0
 local jump_stop = 0
 local hitpoints = 10
 local game_over = false
+local armor_type = 0
 local game_seconds = 0
 local last_tick = 0
 local sprite = {}
@@ -311,6 +312,8 @@ function love.load()
   die = love.graphics.newImage("gameover.png")
   sprite["cow"] = love.graphics.newImage("cow.png")
   sprite["pig"] = love.graphics.newImage("pig.png")
+  sprite["armor1"] = love.graphics.newImage("armor1.png")
+  sprite["armor2"] = love.graphics.newImage("armor2.png")
   rip_stone = love.graphics.newImage("tomb_cave.png")
   boss_herht = love.graphics.newImage("1_BOSS_HERHT.png")
   sprite["boss"] = love.graphics.newImage("1_BOSS.png")
@@ -414,6 +417,7 @@ function love.draw()
   end
   --player
   player_sprite = Player
+  armor_sprite = nil
   if hitpoints<1 then
     -- dead
     if playerY<30 then
@@ -423,10 +427,19 @@ function love.draw()
     end
   elseif run==0 then
     player_sprite = Player
+    if armor_type > 0 then
+      armor_sprite = sprite["armor" .. armor_type]
+    end
   else
     player_sprite = Player2
+    if armor_type > 0 then
+      armor_sprite = sprite["armor" .. armor_type]
+    end
   end
   love.graphics.draw(player_sprite, cellsize*(playerX-this_room_start_x), cellsize*(playerY-this_room_start_y) )
+  if armor_sprite then
+    love.graphics.draw(armor_sprite, cellsize*(playerX-this_room_start_x), cellsize*(playerY-this_room_start_y) )
+  end
 
   --Жижа
   for hit=1,hitpoints do
@@ -516,7 +529,14 @@ function love.keypressed( key )
   if gameover then
     return
   end
-  
+
+  if key == "f12" then
+    armor_type = armor_type + 1
+    if armor_type > 2 then
+      armor_type = 0
+    end
+  end
+
   newX=playerX
   newY=playerY
   if key == "d" then
