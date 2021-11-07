@@ -182,8 +182,19 @@ function love.update(dt)
 
   if game_seconds > last_tick + 0.3 then
     -- tick
+    sword = {}
+    sword.x=playerX
+    sword.y=playerY
+    if storona == "up" then
+      sword.y = sword.y-1
+    elseif storona == "down" then
+      sword.y = sword.y+1  
+    elseif storona == "left" then
+      sword.x = sword.x-1 
+    elseif storona == "right" then
+      sword.x = sword.x+1 
+    end      
     storona = 0
-    
     for i, mob in ipairs(mobs) do
       if playerX>mob.x then
         mob.speed_X=1
@@ -253,12 +264,13 @@ function love.update(dt)
         sound_oof:play()
       end
 
-      if inv[9]>0 and playerY==mob.y and playerX==mob.x then
+      if inv[9]>0 and sword.y==mob.y and sword.x==mob.x then
         mob.hitpoints=mob.hitpoints-1
         inv[9]=inv[9]-1  
       end
       if mob.hitpoints<1 then
         table.remove (mobs,i)
+        world[mob.x][mob.y]=12
       end  
     end
     -- done with mobs
@@ -548,8 +560,7 @@ function love.keypressed( key )
   elseif key == "right" then
     storona = "right"
   end  
-  print("storona =", storona, "key =", key)
-  
+    
   mouseXpx = love.mouse.getX()
   mouseX = math.floor(mouseXpx / cellsize)
   mouseYpx = love.mouse.getY()
