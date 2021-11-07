@@ -63,9 +63,9 @@ inv[8]=0
 inv[3]=0
 inv[10]=666
 local mobs = {}
-mobs[1] = {x = 25, y = 5, speed_X=-1, speed_Y=0, bonks_left = 15, mob_type = "cow"}
-mobs[2] = {x = 25, y = 15, speed_X=-1, speed_Y=0, bonks_left = 66, mob_type = "boss"}
-mobs[3] = {x = 25, y = 10, speed_X=-1, speed_Y=0, bonks_left = 15, mob_type = "pig"}
+mobs[1] = {x = 25, y = 5, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "cow"}
+mobs[2] = {x = 25, y = 15, max_hitpoints = 30, hitpoints = 10, bonks_left = 66, mob_type = "boss"}
+mobs[3] = {x = 25, y = 10, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "pig"}
 function explosion(x,y,exbl)
   for ex=x-5,x+5 do
     for ey=y-5,y+5 do
@@ -200,6 +200,7 @@ function love.update(dt)
       else
         mob.speed_Y = -1
       end
+
       if mob["mob_type"] == "cow" then
         newmobX = mob.x + mob.speed_X
         newmobY = mob.y + mob.speed_Y
@@ -213,6 +214,7 @@ function love.update(dt)
             mob.bonks_left = mob.bonks_left -1
           end
         end
+        damage=1
       elseif mob["mob_type"] == "boss" then
         --boss run
         newmobX = mob.x + mob.speed_X
@@ -230,6 +232,7 @@ function love.update(dt)
         if can_walk(newmobX, newmobY) then
           mob.x = newmobX
           mob.y = newmobY
+          damage=0
         else
           if mob.bonks_left > 0 then
             sound_bonk:stop()
@@ -238,45 +241,28 @@ function love.update(dt)
           end
         end  
       end
-      damage=1
-      if mob["mob_type"]=="boss" then
-        damage=3
+
+      mob_damage = { boss = 3, cow = 1, pig = 0 }
+      damage=mob_damage[ mob["mob_type"] ]
+        
+      if inv[10]>0 then
+        inv[10]=inv[10]-damage
+      else
+        hitpoints=hitpoints-1
+        sound_oof:stop() 
+        sound_oof:play()
       end
-      if mob.x == playerX and mob.y == playerY then
-        if inv[9]>0 and inv[10]<0 and mob["mob_type"]=="cow" then
-            inv[9]=inv[9]-1
-            hitpoints=hitpoints-damage
-            sound_oof:stop()
-            sound_oof:play()
-            table.remove (mobs,i)
-        elseif mob["mob_type"]=="boss" and inv[9]>0 and inv[10]<0 then
-            boss_live = boss_live-1
-            inv[9]=inv[9]-1
-            hitpoints=hitpoints-damage
-            sound_oof:stop()
-            sound_oof:play()
-        elseif inv[9]>0 and inv[10]>0 and mob["mob_type"]=="cow" then
-          inv[9]=inv[9]-1
-          inv[10]=inv[10]-damage
-          table.remove (mobs,i)
-        elseif mob["mob_type"]=="boss" and inv[9]>0 and inv[10]>0 then
-          boss_live = boss_live-1
-          if boss_live<1 then
-            table.remove (mobs,i)
-          end
-          inv[9]=inv[9]-1
-          inv[10]=inv[10]-damage
-        elseif inv[9]<0 and inv[10]>0 then
-          inv[10]=inv[10]-damage
-        else
-          hitpoints=hitpoints-damage
-          sound_oof:stop()
-          sound_oof:play()
-        end
+
+      if inv[9]>0 and playerY==mob.y and playerX==mob.x then
+        mob.hitpoints=mob.hitpoints-1
+        inv[9]=inv[9]-1  
       end
+      if mob.hitpoints<1 then
+        table.remove (mobs,i)
+      end  
     end
     -- done with mobs
-
+    
     -- bomb update
     for x = 0, world_w do
       for y = 0, world_h do
@@ -408,6 +394,7 @@ function love.draw()
     elseif mob ["mob_type"] == "pig" then
       love.graphics.draw(sprite.pig, cellsize * (mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
     end
+    love.graphics.print(mob.hitpoints,cellsize*(mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y)) 
   end
   
   if storona == "up" then 
@@ -448,13 +435,6 @@ function love.draw()
   --Жижа
   for hit=1,hitpoints do
     love.graphics.draw(heart,cellsize*hit,cellsize)
-  end
-
-
-
-  --boss ЖИЖА!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  for boss_live=1,boss_live do
-    love.graphics.draw(boss_herht,cellsize*boss_live,cellsize,cellsize*180)
   end
 
   -- SUN!
@@ -675,6 +655,3 @@ function love.keypressed( key )
     end
   end
 end
---XD
---stonks
---LINK
