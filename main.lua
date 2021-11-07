@@ -152,8 +152,12 @@ function init_world()
   explosion(10,10,16)
 end
 
+function in_world(x,y)
+  return ( x>=0 and x<world_w and y>=0 and y<world_h )
+end
+
 function can_walk(x,y)
-  return ( x>=0 and x<world_w and y>=0 and y<world_h ) and blocks[world[x][y]].passable
+  return in_world(x,y) and blocks[world[x][y]].passable
 end
 
 function love.update(dt)
@@ -595,7 +599,7 @@ function love.keypressed( key )
     end
   end
 
-  if blocks[world[newX][newY]].pushable then
+  if in_world(newX, newY) and blocks[world[newX][newY]].pushable then
     newX2 = newX+newX-playerX
     newY2 = newY+newY-playerY 
     if world[newX2][newY2]==0 then
