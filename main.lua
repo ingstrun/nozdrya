@@ -4,8 +4,8 @@ local run = 0
 local cellsize = 32
 local room_w = 70
 local room_h = 40
-local world_w = 3 * room_w
-local world_h = 5 * room_h
+local world_w = 5 * room_w
+local world_h = 8 * room_h
 local dange_h = 9
 local dange_w = 8
 local cave_h = 9
@@ -41,8 +41,8 @@ blocks[9] = { number = 9, set_key = "_", sprite = "sword.png", passable = true, 
 blocks[8] = { number = 8, set_key = "_", sprite = "gold_ore.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[7] = { number = 7, set_key = "_", sprite = "pick.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[10] = { number = 10, set_key = "_", sprite = "sheld.png", passable = true, breakable = false, collectable = true, pushable = false }
-blocks[11] = { number = 11, set_key = "7", sprite = "pepper.png", passable = true, breakable = false, collectable = true, pushable = false }
-blocks[12] = { number = 12, set_key = "8", sprite = "myaso.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[11] = { number = 11, set_key = "_", sprite = "pepper.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[12] = { number = 12, set_key = "_", sprite = "myaso.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[13] = { number = 13, set_key = "9", sprite = "water.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[14] = { number = 14, set_key = "/", sprite = "chest.png", passable = false, breakable = false, collectable = false, pushable = true }
 blocks[15] = { number = 15, set_key = "=", sprite = "Boom1.png", passable = true, breakable = false, collectable = false, pushable = false }
@@ -51,6 +51,9 @@ for bombs = 17,25 do
   blocks[bombs] = { number = bombs, set_key = ".", sprite = "TNTboom.png", passable = false, breakable = false, collectable = false, pushable = true } 
 end  
 blocks[26] = { number = 26, set_key = "\\", sprite = "leaves.png", passable = true, breakable = true, collectable = true, pushable = false }
+blocks[27] = { number = 27, set_key = "\\", sprite = "stone and ice.png", passable = false, breakable = true, collectable = true, pushable = false }
+blocks[28] = { number = 28, set_key = "8", sprite = "furnaceforpizzanoactive.png", passable = true, breakable = false, collectable = false, pushable = false }
+blocks[29] = { number = 29, set_key = "_", sprite = "iron.png", passable = false, breakable = true, collectable = false, pushable = false }
 
 local inv = {}
 inv[9]=666
@@ -135,11 +138,11 @@ function init_world()
     end
   end
   io.close(file)
-  tree_number=3
+  tree_number=12
   for room_number=0, tree_number-1 do
     file = io.open("tree","r")
     io.input(file)
-    treeX=math.random(room_w*room_number, room_w*(room_number+1)-1-tree_w)
+    treeX=math.random(0,70*5)                            --(room_w*room_number, room_w*(room_number+1)-1-tree_w)
     treeY=12
 
     for i = 0, tree_h-1 do
@@ -257,7 +260,9 @@ function love.update(dt)
       damage=mob_damage[ mob["mob_type"] ]
         
       if inv[10]>0 then
+       if playerY==mob.y and playerX==mob.x then 
         inv[10]=inv[10]-damage
+       end 
       else
         hitpoints=hitpoints-1
         sound_oof:stop() 
@@ -567,7 +572,7 @@ function love.keypressed( key )
   mouseY = math.floor(mouseYpx / cellsize)
 
   if key == "c" then
-    newcow = {x = mouseX+this_room_start_x, y = mouseY+this_room_start_y, speed_X=-1, speed_Y=0, bonks_left = 15, mob_type = "cow"}
+    newcow = {x = mouseX+this_room_start_x, y = mouseY+this_room_start_y,max_hitpoints = 5, hitpoints = 5, bonks_left = 15, mob_type = "cow"}
     table.insert(mobs, newcow)
   end
 
