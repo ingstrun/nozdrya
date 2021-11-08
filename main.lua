@@ -48,8 +48,8 @@ blocks[14] = { number = 14, set_key = "/", sprite = "chest.png", passable = fals
 blocks[15] = { number = 15, set_key = "=", sprite = "Boom1.png", passable = true, breakable = false, collectable = false, pushable = false }
 blocks[16] = { number = 16, set_key = "=", sprite = "Boom2.png", passable = true, breakable = false, collectable = false, pushable = false }
 for bombs = 17,25 do
-  blocks[bombs] = { number = bombs, set_key = ".", sprite = "TNTboom.png", passable = false, breakable = false, collectable = false, pushable = true } 
-end  
+  blocks[bombs] = { number = bombs, set_key = ".", sprite = "TNTboom.png", passable = false, breakable = false, collectable = false, pushable = true }
+end
 blocks[26] = { number = 26, set_key = "\\", sprite = "leaves.png", passable = true, breakable = true, collectable = true, pushable = false }
 blocks[27] = { number = 27, set_key = "\\", sprite = "stone and ice.png", passable = false, breakable = true, collectable = true, pushable = false }
 blocks[28] = { number = 28, set_key = "8", sprite = "furnaceforpizzanoactive.png", passable = true, breakable = false, collectable = false, pushable = false }
@@ -73,9 +73,9 @@ function explosion(x,y,exbl)
   for ex=x-5,x+5 do
     for ey=y-5,y+5 do
       world[ex][ey] = exbl
-    end  
+    end
   end
-    
+
   world[x][y] = 1
 end
 
@@ -99,7 +99,7 @@ function init_world()
     end
   end
   --dange
-  
+
 
   file = io.open("cave 2", "r")
   -- sets the default output file as test.lua
@@ -164,10 +164,10 @@ function can_walk(x,y)
 end
 
 function love.update(dt)
-  
+
   if game_mode == "mainmenu" then
     return
-  end    
+  end
   gameover = hitpoints<1
 
   game_seconds = game_seconds + dt
@@ -177,7 +177,7 @@ function love.update(dt)
   mouseYpx = love.mouse.getY()
   mouseY = math.floor(mouseYpx / cellsize)
 
-  for i, bl in pairs(blocks) do   
+  for i, bl in pairs(blocks) do
     if love.keyboard.isDown( bl.set_key ) then
       world[this_room_start_x+mouseX][this_room_start_y+mouseY] = i
     end
@@ -191,12 +191,12 @@ function love.update(dt)
     if storona == "up" then
       sword.y = sword.y-1
     elseif storona == "down" then
-      sword.y = sword.y+1  
+      sword.y = sword.y+1
     elseif storona == "left" then
-      sword.x = sword.x-1 
+      sword.x = sword.x-1
     elseif storona == "right" then
-      sword.x = sword.x+1 
-    end      
+      sword.x = sword.x+1
+    end
     storona = 0
     for i, mob in ipairs(mobs) do
       if playerX>mob.x then
@@ -253,33 +253,33 @@ function love.update(dt)
             sound_bonk:play()
             mob.bonks_left = mob.bonks_left -1
           end
-        end  
+        end
       end
 
       mob_damage = { boss = 3, cow = 1, pig = 0 }
       damage=mob_damage[ mob["mob_type"] ]
-        
+
       if inv[10]>0 then
-       if playerY==mob.y and playerX==mob.x then 
+       if playerY==mob.y and playerX==mob.x then
         inv[10]=inv[10]-damage
-       end 
+       end
       else
         hitpoints=hitpoints-1
-        sound_oof:stop() 
+        sound_oof:stop()
         sound_oof:play()
       end
 
       if inv[9]>0 and sword.y==mob.y and sword.x==mob.x then
         mob.hitpoints=mob.hitpoints-1
-        inv[9]=inv[9]-1  
+        inv[9]=inv[9]-1
       end
       if mob.hitpoints<1 then
         table.remove (mobs,i)
         world[mob.x][mob.y]=12
-      end  
+      end
     end
     -- done with mobs
-    
+
     -- bomb update
     for x = 0, world_w do
       for y = 0, world_h do
@@ -289,14 +289,14 @@ function love.update(dt)
           world[x][y]=world[x][y]-1
           if world[x][y]==16 then
             explosion(x,y,16)
-            sound_boom:play()  
-          end  
+            sound_boom:play()
+          end
         end
       end
     end
 
     last_tick = game_seconds
-    
+
 
   end
 
@@ -353,7 +353,7 @@ function love.draw()
     red = 13/100
     green = 68/100
     blue = 96/100
-    alpha = 0/100  
+    alpha = 0/100
   else
     sunnight = moon
     red = 11/100
@@ -361,8 +361,8 @@ function love.draw()
     blue = 29/100
     alpha = 0/100
   end
-  
-  
+
+
   love.graphics.setBackgroundColor( red, green, blue, alpha)
 
   this_room_start_x = room_w * math.floor(playerX/room_w)
@@ -396,10 +396,10 @@ function love.draw()
       elseif sprite_to_draw then
         love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
       end
-      
+
     end
   end
-  
+
   love.graphics.print(game_mode, cellsize*10,cellsize*10, 0, 2)
   love.graphics.print(storona, cellsize*12,cellsize*10, 0, 2)
   -- mobs
@@ -411,10 +411,10 @@ function love.draw()
     elseif mob ["mob_type"] == "pig" then
       love.graphics.draw(sprite.pig, cellsize * (mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
     end
-    love.graphics.print(mob.hitpoints,cellsize*(mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y)) 
+    love.graphics.print(mob.hitpoints,cellsize*(mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
   end
-  
-  if storona == "up" then 
+
+  if storona == "up" then
     love.graphics.draw(swordup, cellsize*(playerX-this_room_start_x), cellsize*(playerY-1-this_room_start_y) )
   elseif storona == "down" then
     love.graphics.draw(swordup, cellsize*(playerX-this_room_start_x), cellsize*(playerY+1-this_room_start_y), math.rad(180), 1, 1, 32, 32 )
@@ -472,7 +472,7 @@ function love.draw()
     a = nose:getWidth()/2
     b = room_w * cellsize
     cx = (b-a)/2
-    love.graphics.draw(nose, cx ,0 , 0, 0.5) 
+    love.graphics.draw(nose, cx ,0 , 0, 0.5)
   end
 end
 
@@ -501,11 +501,11 @@ end
 function love.keypressed( key )
 
   if key == "escape" then
-    if  game_mode == "mainmenu" then   
+    if  game_mode == "mainmenu" then
       game_mode = "play"
     else
-      game_mode = "mainmenu" 
-    end    
+      game_mode = "mainmenu"
+    end
   end
 
   if key == "f9" then
@@ -552,10 +552,10 @@ function love.keypressed( key )
   if key == "s" then
     newY = playerY+1
   end
-  if key == "g" then 
+  if key == "g" then
     init_world()
   end
-  
+
   if key == "up" then
     storona = "up"
   elseif key == "down" then
@@ -564,8 +564,8 @@ function love.keypressed( key )
     storona = "left"
   elseif key == "right" then
     storona = "right"
-  end  
-    
+  end
+
   mouseXpx = love.mouse.getX()
   mouseX = math.floor(mouseXpx / cellsize)
   mouseYpx = love.mouse.getY()
@@ -597,12 +597,12 @@ function love.keypressed( key )
 
   if in_world(newX, newY) and blocks[world[newX][newY]].pushable then
     newX2 = newX+newX-playerX
-    newY2 = newY+newY-playerY 
+    newY2 = newY+newY-playerY
     if world[newX2][newY2]==0 then
       world[newX2][newY2]=world[newX][newY]
       world[newX][newY]=0
-    end   
-  end  
+    end
+  end
 
   if can_walk(newX, newY) then
     item = world[newX][newY]
