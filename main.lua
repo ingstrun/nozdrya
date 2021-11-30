@@ -29,7 +29,7 @@ local world = {}
 local blocks = {}
 local boss_live = 10
 local storona = 0
-game_mode = "mainmenu"
+game_mode = "craft"
 blocks[0] = { number = 0, set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
 blocks[1] = { number = 1, set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[2] = { number = 2, set_key = "2", sprite = "dirt.png", passable = false, breakable = true, collectable = false, pushable = false }
@@ -69,10 +69,13 @@ local mobs = {}
 mobs[1] = {x = 25, y = 5, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "cow"}
 mobs[2] = {x = 25, y = 15, max_hitpoints = 30, hitpoints = 10, bonks_left = 66, mob_type = "boss"}
 mobs[3] = {x = 25, y = 10, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "pig"}
+
 function explosion(x,y,exbl)
   for ex=x-5,x+5 do
     for ey=y-5,y+5 do
-      world[ex][ey] = exbl
+      if in_world(ex,ey) then
+        world[ex][ey] = exbl
+      end  
     end
   end
 
@@ -147,7 +150,9 @@ function init_world()
 
     for i = 0, tree_h-1 do
       for XD = 0, tree_w-1 do
-        world[XD+treeX][i+treeY] = io.read("*number")
+        if in_world(XD+treeX, i+treeY) then
+          world[XD+treeX][i+treeY] = io.read("*number")
+        end  
       end
     end
     io.close(file)
@@ -165,7 +170,7 @@ end
 
 function love.update(dt)
 
-  if game_mode == "mainmenu" then
+  if game_mode ~= "play" then
     return
   end
   gameover = hitpoints<1
@@ -332,6 +337,7 @@ function love.load()
   trap_1 = love.graphics.newImage("its a trap!.png")
   trap_2 = love.graphics.newImage("its a trap! 2 .png")
   swordup = love.graphics.newImage("swordup.png")
+  craft_title = love.graphics.newImage("craft title.png")
   for i, bl in pairs(blocks) do
     if bl.sprite then
       bl.img = love.graphics.newImage(bl.sprite)
@@ -474,6 +480,12 @@ function love.draw()
     cx = (b-a)/2
     love.graphics.draw(nose, cx ,0 , 0, 0.5)
   end
+  if game_mode == "craft" then
+    a = craft_title:getWidth()
+    b = room_w * cellsize
+    cx = (b-a)/2
+    love.graphics.draw(craft_title, cx ,0 , 0.1, 1.0)
+  end
 end
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
@@ -507,6 +519,14 @@ function love.keypressed( key )
       game_mode = "mainmenu"
     end
   end
+  
+  if key == "k" then    
+    if  game_mode == "craft" then
+      game_mode = "play"
+    else
+      game_mode = "craft"
+    end
+  end
 
   if key == "f9" then
     file = io.open("world.txt", "r")
@@ -524,12 +544,14 @@ function love.keypressed( key )
 
     io.close(file)
   end
-  if game_mode == "mainmenu" then
+
+  if game_mode ~= "play" then
     return
   end
   if gameover then
     return
   end
+  -- everything after this only works in PLAY
 
   if key == "f12" then
     armor_type = armor_type + 1
