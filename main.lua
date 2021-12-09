@@ -30,30 +30,30 @@ local blocks = {}
 local boss_live = 10
 local storona = 0
 game_mode = "craft"
-blocks[0] = { number = 0, set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
-blocks[1] = { number = 1, set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
-blocks[2] = { number = 2, set_key = "2", sprite = "dirt.png", passable = false, breakable = true, collectable = false, pushable = false }
-blocks[3] = { number = 3, set_key = "3", sprite = "stone.png", passable = false, breakable = true, collectable = false, pushable = false }
-blocks[4] = { number = 4, set_key = "4", sprite = "bricks.png", passable = false, breakable = true, collectable = false, pushable = false }
-blocks[5] = { number = 5, set_key = "5", sprite = "wood.png", passable = false, breakable = true, collectable = false, pushable = false }
-blocks[6] = { number = 6, set_key = "6", sprite = "background.png", passable = true, breakable = false, collectable = false, pushable = false }
-blocks[9] = { number = 9, set_key = "_", sprite = "sword.png", passable = true, breakable = false, collectable = true, pushable = false }
-blocks[8] = { number = 8, set_key = "_", sprite = "gold_ore.png", passable = false, breakable = true, collectable = false, pushable = false }
-blocks[7] = { number = 7, set_key = "_", sprite = "pick.png", passable = true, breakable = false, collectable = true, pushable = false }
-blocks[10] = { number = 10, set_key = "_", sprite = "sheld.png", passable = true, breakable = false, collectable = true, pushable = false }
-blocks[11] = { number = 11, set_key = "_", sprite = "pepper.png", passable = true, breakable = false, collectable = true, pushable = false }
-blocks[12] = { number = 12, set_key = "_", sprite = "myaso.png", passable = true, breakable = false, collectable = true, pushable = false }
-blocks[13] = { number = 13, set_key = "9", sprite = "water.png", passable = true, breakable = false, collectable = true, pushable = false }
-blocks[14] = { number = 14, set_key = "/", sprite = "chest.png", passable = false, breakable = false, collectable = false, pushable = true }
-blocks[15] = { number = 15, set_key = "=", sprite = "Boom1.png", passable = true, breakable = false, collectable = false, pushable = false }
-blocks[16] = { number = 16, set_key = "=", sprite = "Boom2.png", passable = true, breakable = false, collectable = false, pushable = false }
+blocks[0]  = { number =  0, name = "nil", set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
+blocks[1]  = { number =  1, name = "grass", set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[2]  = { number =  2, name = "dirt", set_key = "2", sprite = "dirt.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[3]  = { number =  3, name = "stone", set_key = "3", sprite = "stone.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[4]  = { number =  4, name = "bricks", set_key = "4", sprite = "bricks.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[5]  = { number =  5, name = "wood", set_key = "5", sprite = "wood.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[6]  = { number =  6, name = "background", set_key = "6", sprite = "background.png", passable = true, breakable = false, collectable = false, pushable = false }
+blocks[9]  = { number =  9, name = "sword", set_key = "_", sprite = "sword.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[8]  = { number =  8, name = "gold_ore", set_key = "_", sprite = "gold_ore.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[7]  = { number =  7, name = "pick", set_key = "_", sprite = "pick.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[10] = { number = 10, name = "shield", set_key = "_", sprite = "sheld.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[11] = { number = 11, name = "pepper", set_key = "_", sprite = "pepper.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[12] = { number = 12, name = "myaso", set_key = "_", sprite = "myaso.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[13] = { number = 13, name = "water", set_key = "9", sprite = "water.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[14] = { number = 14, name = "chest", set_key = "/", sprite = "chest.png", passable = false, breakable = false, collectable = false, pushable = true }
+blocks[15] = { number = 15, name = "boom1", set_key = "=", sprite = "Boom1.png", passable = true, breakable = false, collectable = false, pushable = false }
+blocks[16] = { number = 16, name = "boom2", set_key = "=", sprite = "Boom2.png", passable = true, breakable = false, collectable = false, pushable = false }
 for bombs = 17,25 do
-  blocks[bombs] = { number = bombs, set_key = ".", sprite = "TNTboom.png", passable = false, breakable = false, collectable = false, pushable = true }
+  blocks[bombs] = { number = bombs, name = "bomb", set_key = ".", sprite = "TNTboom.png", passable = false, breakable = false, collectable = false, pushable = true }
 end
-blocks[26] = { number = 26, set_key = "\\", sprite = "leaves.png", passable = true, breakable = true, collectable = true, pushable = false }
-blocks[27] = { number = 27, set_key = "\\", sprite = "stone and ice.png", passable = false, breakable = true, collectable = true, pushable = false }
-blocks[28] = { number = 28, set_key = "8", sprite = "furnaceforpizzanoactive.png", passable = true, breakable = false, collectable = false, pushable = false }
-blocks[29] = { number = 29, set_key = "_", sprite = "iron.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[26] = { number = 26, name = "leaves", set_key = "\\", sprite = "leaves.png", passable = true, breakable = true, collectable = true, pushable = false }
+blocks[27] = { number = 27, name = "stone_and_ice", set_key = "\\", sprite = "stone and ice.png", passable = false, breakable = true, collectable = true, pushable = false }
+blocks[28] = { number = 28, name = "furnace_for_pizza_no_active", set_key = "8", sprite = "furnaceforpizzanoactive.png", passable = true, breakable = false, collectable = false, pushable = false }
+blocks[29] = { number = 29, name = "iron", set_key = "_", sprite = "iron.png", passable = false, breakable = true, collectable = false, pushable = false }
 
 local inv = {}
 inv[9]=666
@@ -69,6 +69,11 @@ local mobs = {}
 mobs[1] = {x = 25, y = 5, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "cow"}
 mobs[2] = {x = 25, y = 15, max_hitpoints = 30, hitpoints = 10, bonks_left = 66, mob_type = "boss"}
 mobs[3] = {x = 25, y = 10, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "pig"}
+
+recipes = {}
+table.insert(recipes, {ins = { wood = 3, gold_ore = 1 }, outs = { shield = 10}})
+table.insert(recipes, {ins = { dirt = 2, gold_ore = 2 }, outs = { pick = 10}})
+table.insert(recipes, {ins = { wood = 1, gold_ore = 3 }, outs = { sword = 10}})
 
 function explosion(x,y,exbl)
   for ex=x-5,x+5 do
