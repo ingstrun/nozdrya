@@ -498,17 +498,18 @@ function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
   -- button 1=left, 2=right
   colnum = math.floor(mouseXpx / cellsize)
   rownum = math.floor(mouseYpx / cellsize)
-
-  if button == 1 then
-    world[colnum][rownum] = world[colnum][rownum] + 1
-  else
-    if world[colnum][rownum] > 0 then
+  if game_mode == "play" then
+    if button == 1 then
+      world[colnum][rownum] = world[colnum][rownum] + 1
+    else
+      if world[colnum][rownum] > 0 then
+        world[colnum][rownum] = world[colnum][rownum] - 1
+      end
+    end
+    if world[colnum][rownum] > 5 then
       world[colnum][rownum] = world[colnum][rownum] - 1
     end
-  end
-  if world[colnum][rownum] > 5 then
-    world[colnum][rownum] = world[colnum][rownum] - 1
-  end
+  end 
 end
 
 function player_tp(targetX, targetY)
