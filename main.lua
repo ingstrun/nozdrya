@@ -42,7 +42,7 @@ blocks[8]  = { number =  8, name = "gold_ore", set_key = "_", sprite = "gold_ore
 blocks[7]  = { number =  7, name = "pick", set_key = "_", sprite = "pick.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[10] = { number = 10, name = "shield", set_key = "_", sprite = "sheld.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[11] = { number = 11, name = "pepper", set_key = "_", sprite = "pepper.png", passable = true, breakable = false, collectable = true, pushable = false }
-blocks[12] = { number = 12, name = "myaso", set_key = "_", sprite = "myaso.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[12] = { number = 12, name = "meat", set_key = "_", sprite = "myaso.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[13] = { number = 13, name = "water", set_key = "9", sprite = "water.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[14] = { number = 14, name = "chest", set_key = "/", sprite = "chest.png", passable = false, breakable = false, collectable = false, pushable = true }
 blocks[15] = { number = 15, name = "boom1", set_key = "=", sprite = "Boom1.png", passable = true, breakable = false, collectable = false, pushable = false }
@@ -490,6 +490,13 @@ function love.draw()
     b = room_w * cellsize
     cx = (b-a)/2
     love.graphics.draw(craft_title, cx ,0 , 0.1, 1.0)
+    for x=0,4 do
+      for y=0,1 do
+        love.graphics.rectangle("fill",320*(x+1),320*(y+1),320,320,10,10)
+      end
+    end    
+      
+     
   end
 end
 
