@@ -471,6 +471,7 @@ function love.draw()
   love.graphics.draw(sunnight,sunpos*room_w*cellsize,cellsize*3)
 
   e = 2*2
+  --inv
   for what, num in pairs(inv) do
     love.graphics.draw(blocks[what].img,cellsize,cellsize*e)
     love.graphics.print(" x "..inv[what], cellsize*2,cellsize*e, 0, 2)
@@ -479,26 +480,41 @@ function love.draw()
   if gameover then
     love.graphics.draw(die,room_w*32/2-die:getWidth()/2,room_h*32/2-die:getHeight()/2-100)
   end
+  
   if game_mode == "mainmenu" then
     a = nose:getWidth()/2
     b = room_w * cellsize
     cx = (b-a)/2
     love.graphics.draw(nose, cx ,0 , 0, 0.5)
   end
+  
   if game_mode == "craft" then
     a = craft_title:getWidth()
     b = room_w * cellsize
     cx = (b-a)/2
     love.graphics.draw(craft_title, cx ,0 , 0.1, 1.0)
-    for x=0,4 do
-      for y=0,1 do
-        love.graphics.rectangle("fill",320*(x+1),320*(y+1),320,320,10,10)
+
+    recipe_number=1
+
+    for y=0,1 do
+      for x=0,4 do
+        draw_recipe(recipe_number, 320*(x+1),320*(y+1))
+        recipe_number=recipe_number+1
       end
-    end    
-      
-     
+    end      
   end
 end
+
+function draw_recipe(recipe_number, x,y)
+  if recipe_number%2>0 then
+    love.graphics.setColor(1, 1, 1)
+  else
+    love.graphics.setColor(0,1,0)  
+  end  
+  love.graphics.rectangle("fill",x,y,320,320,10,10)
+  love.graphics.setColor(0, 0, 0)
+  love.graphics.print(recipe_number,x+160,y+160,0,8)
+end  
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
   -- x -- in pixels
