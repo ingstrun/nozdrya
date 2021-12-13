@@ -509,11 +509,18 @@ function draw_recipe(recipe_number, x,y)
   if recipe_number%2>0 then
     love.graphics.setColor(1, 1, 1)
   else
-    love.graphics.setColor(0,1,0)  
+    love.graphics.setColor(0,1,1)  
   end  
   love.graphics.rectangle("fill",x,y,320,320,10,10)
   love.graphics.setColor(0, 0, 0)
-  love.graphics.print(recipe_number,x+160,y+160,0,8)
+  love.graphics.print("X10",x+200,y+80,0,4)
+  love.graphics.print("X3",x+(32*2.5),y+(32*7),0,2)
+  love.graphics.print("X1",x+(32*5.5),y+(32*7),0,2)
+
+  love.graphics.setColor(1,0,1) 
+  love.graphics.rectangle("line",x+32,y+32,32*5,32*5,10,10)
+  love.graphics.rectangle("line",x+(32*4),y+(32*7),32*1,32*1,10,10)
+  love.graphics.rectangle("line",x+32,y+(32*7),32*1,32*1,10,10)
 end  
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
