@@ -71,9 +71,10 @@ mobs[2] = {x = 25, y = 15, max_hitpoints = 30, hitpoints = 10, bonks_left = 66, 
 mobs[3] = {x = 25, y = 10, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "pig"}
 
 recipes = {}
-table.insert(recipes, {ins = { wood = 3, gold_ore = 1 }, outs = { shield = 10}})
-table.insert(recipes, {ins = { dirt = 2, gold_ore = 2 }, outs = { pick = 10}})
-table.insert(recipes, {ins = { wood = 1, gold_ore = 3 }, outs = { sword = 10}})
+table.insert(recipes, {ins = { wood = 3, gold_ore = 1 }, outs = { shield = 11}})
+table.insert(recipes, {ins = { dirt = 2, gold_ore = 2 }, outs = { pick = 12}})
+table.insert(recipes, {ins = { wood = 1, gold_ore = 3 }, outs = { sword = 13}})
+table.insert(recipes, {ins = { wood = 1, gold_ore = 3 }, outs = { sword = 1}})
 
 function explosion(x,y,exbl)
   for ex=x-5,x+5 do
@@ -513,10 +514,17 @@ function draw_recipe(recipe_number, x,y)
   end  
   love.graphics.rectangle("fill",x,y,320,320,10,10)
   love.graphics.setColor(0, 0, 0)
-  love.graphics.print("X10",x+200,y+80,0,4)
-  love.graphics.print("X3",x+(32*2.5),y+(32*7),0,2)
-  love.graphics.print("X1",x+(32*5.5),y+(32*7),0,2)
-
+  out_num=4
+  if recipe_number > #recipes then
+    return
+  end
+  for what, num in pairs( recipes[recipe_number]["outs"]) do
+    out_num=num
+  end  
+  love.graphics.print("X"..out_num,x+200,y+80,0,4)
+  love.graphics.print("X",x+(32*2.5),y+(32*7),0,2)
+  love.graphics.print("X",x+(32*5.5),y+(32*7),0,2)
+  --table.insert(recipes, {ins = { wood = 3, gold_ore = 1 }, outs = { shield = 10}})
   love.graphics.setColor(1,0,1) 
   love.graphics.rectangle("line",x+32,y+32,32*5,32*5,10,10)
   love.graphics.rectangle("line",x+(32*4),y+(32*7),32*1,32*1,10,10)
