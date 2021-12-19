@@ -71,10 +71,10 @@ mobs[2] = {x = 25, y = 15, max_hitpoints = 30, hitpoints = 10, bonks_left = 66, 
 mobs[3] = {x = 25, y = 10, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "pig"}
 
 recipes = {}
-table.insert(recipes, {ins = { wood = 3, gold_ore = 1 }, outs = { shield = 11}})
-table.insert(recipes, {ins = { dirt = 2, gold_ore = 2 }, outs = { pick = 12}})
-table.insert(recipes, {ins = { wood = 1, gold_ore = 3 }, outs = { sword = 13}})
-table.insert(recipes, {ins = { wood = 1, gold_ore = 3 }, outs = { sword = 1}})
+table.insert(recipes, {ins = { {'wood', 3}, {'gold_ore', 1} }, outs = { {'shield', 10}}})
+table.insert(recipes, {ins = { {"dirt" , 2}, {"gold_ore" , 2} }, outs = { {"pick" , 20}}})
+table.insert(recipes, {ins = { {"wood" , 1}, {"gold_ore" , 3} }, outs = { {"sword" , 15}}})
+
 
 function explosion(x,y,exbl)
   for ex=x-5,x+5 do
@@ -398,7 +398,7 @@ function love.draw()
   for x = 0, room_w do
     for y = 0, room_h do
       block_to_draw = blocks[ world[this_room_start_x+x][this_room_start_y+y] ]
-      sprite_to_draw = block_to_draw.img
+      local sprite_to_draw = block_to_draw.img
       if block_to_draw.sprite == "water.png" then
         quad = love.graphics.newQuad( math.floor(game_seconds*30) % 32, 0, 32, 32, sprite_to_draw )
         love.graphics.draw(sprite_to_draw, quad, cellsize*x, cellsize*y)
@@ -514,13 +514,12 @@ function draw_recipe(recipe_number, x,y)
   end  
   love.graphics.rectangle("fill",x,y,320,320,10,10)
   love.graphics.setColor(0, 0, 0)
-  out_num=4
   if recipe_number > #recipes then
     return
   end
-  for what, num in pairs( recipes[recipe_number]["outs"]) do
-    out_num=num
-  end  
+  local sprite_to_draw = blocks[9]["img"]
+  first_out = recipes[recipe_number]["outs"][1]
+  out_what, out_num = first_out[1], first_out[2]
   love.graphics.print("X"..out_num,x+200,y+80,0,4)
   love.graphics.print("X",x+(32*2.5),y+(32*7),0,2)
   love.graphics.print("X",x+(32*5.5),y+(32*7),0,2)
@@ -529,6 +528,8 @@ function draw_recipe(recipe_number, x,y)
   love.graphics.rectangle("line",x+32,y+32,32*5,32*5,10,10)
   love.graphics.rectangle("line",x+(32*4),y+(32*7),32*1,32*1,10,10)
   love.graphics.rectangle("line",x+32,y+(32*7),32*1,32*1,10,10)
+  love.graphics.setColor(1,1,1) 
+  love.graphics.draw(sprite_to_draw,x+32,y+32,0,5,5)
 end  
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
