@@ -506,6 +506,14 @@ function love.draw()
   end
 end
 
+function find_block_by_name(name)
+  for B=0,#blocks do
+    if blocks[B]["name"]==name then
+      return blocks[B]
+    end  
+  end  
+end
+
 function draw_recipe(recipe_number, x,y)
   if recipe_number%2>0 then
     love.graphics.setColor(1, 1, 1)
@@ -517,9 +525,11 @@ function draw_recipe(recipe_number, x,y)
   if recipe_number > #recipes then
     return
   end
-  local sprite_to_draw = blocks[9]["img"]
   first_out = recipes[recipe_number]["outs"][1]
   out_what, out_num = first_out[1], first_out[2]
+
+  local sprite_to_draw = find_block_by_name(out_what)["img"]
+
   love.graphics.print("X"..out_num,x+200,y+80,0,4)
   love.graphics.print("X",x+(32*2.5),y+(32*7),0,2)
   love.graphics.print("X",x+(32*5.5),y+(32*7),0,2)
