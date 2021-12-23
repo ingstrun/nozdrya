@@ -528,18 +528,27 @@ function draw_recipe(recipe_number, x,y)
   first_out = recipes[recipe_number]["outs"][1]
   out_what, out_num = first_out[1], first_out[2]
 
+  in1 = recipes[recipe_number]["ins"][1]
+  in1_what, in1_num = in1[1], in1[2]
+  in2 = recipes[recipe_number]["ins"][2]
+  in2_what, in2_num = in2[1], in2[2]
+
   local sprite_to_draw = find_block_by_name(out_what)["img"]
+  local sprite_in1 = find_block_by_name(in1_what)["img"]
+  local sprite_in2 = find_block_by_name(in2_what)["img"]
 
   love.graphics.print("X"..out_num,x+200,y+80,0,4)
   love.graphics.print("X",x+(32*2.5),y+(32*7),0,2)
   love.graphics.print("X",x+(32*5.5),y+(32*7),0,2)
-  --table.insert(recipes, {ins = { wood = 3, gold_ore = 1 }, outs = { shield = 10}})
+
   love.graphics.setColor(1,0,1) 
   love.graphics.rectangle("line",x+32,y+32,32*5,32*5,10,10)
   love.graphics.rectangle("line",x+(32*4),y+(32*7),32*1,32*1,10,10)
   love.graphics.rectangle("line",x+32,y+(32*7),32*1,32*1,10,10)
   love.graphics.setColor(1,1,1) 
   love.graphics.draw(sprite_to_draw,x+32,y+32,0,5,5)
+  love.graphics.draw(sprite_in1,x+(32*4),y+(32*7))
+  love.graphics.draw(sprite_in2,x+32,y+(32*7))
 end  
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
