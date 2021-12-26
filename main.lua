@@ -549,6 +549,9 @@ function draw_recipe(recipe_number, x,y)
   love.graphics.draw(sprite_to_draw,x+32,y+32,0,5,5)
   love.graphics.draw(sprite_in1,x+(32*4),y+(32*7))
   love.graphics.draw(sprite_in2,x+32,y+(32*7))
+  love.graphics.setColor(0,0,0) 
+  love.graphics.print(in1_num,x+(32*3),y+(32*7),0,2)
+  love.graphics.print(in2_num,x+(32*6),y+(32*7),0,2)
 end  
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
