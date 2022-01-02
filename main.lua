@@ -179,7 +179,7 @@ function init_world()
       end
     end
     io.close(file)
-    
+
   explosion(10,10,16)
 end
 
@@ -519,7 +519,7 @@ function love.draw()
         draw_recipe(recipe_number, 320*(x+1),320*(y+1))
         recipe_number=recipe_number+1
       end
-    end      
+    end  
   end
 end
 
@@ -569,6 +569,16 @@ function draw_recipe(recipe_number, x,y)
   love.graphics.setColor(0,0,0) 
   love.graphics.print(in1_num,x+(32*3),y+(32*7),0,2)
   love.graphics.print(in2_num,x+(32*6),y+(32*7),0,2)
+  --обводка
+ 
+  mouseXpx = love.mouse.getX()
+  mouseYpx = love.mouse.getY()
+ 
+  if mouseXpx>x and mouseYpx>y and mouseXpx<x+320 and mouseYpx<y+320 then
+    love.graphics.setLineWidth( 10 ) 
+    love.graphics.rectangle("line",x,y,320-5,320-5,10,10)
+    love.graphics.setLineWidth( 1 )
+  end  
 end  
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
