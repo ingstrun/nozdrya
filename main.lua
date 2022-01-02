@@ -14,6 +14,8 @@ local cave2_h = 11
 local cave2_w = 19
 local tree_h = 8
 local tree_w = 8
+local ogorod_h = 2
+local ogorod_w = 11
 local time_start_run = 0
 local start_time = love.timer.getTime()
 local last_set_ground = start_time - 1
@@ -162,7 +164,22 @@ function init_world()
       end
     end
     io.close(file)
-  end
+  end  
+  
+    file = io.open("ogorod","r")
+    io.input(file)
+    ogorodX=math.random(0,70*5)                            --(room_w*room_number, room_w*(room_number+1)-1-tree_w)
+    ogorodY=18
+
+    for i = 0, ogorod_h-1 do
+      for XD = 0, ogorod_w-1 do
+        if in_world(XD+ogorodX, i+ogorodY) then
+          world[XD+ogorodX][i+ogorodY] = io.read("*number")
+        end  
+      end
+    end
+    io.close(file)
+    
   explosion(10,10,16)
 end
 
