@@ -31,6 +31,7 @@ local world = {}
 local blocks = {}
 local boss_live = 10
 local storona = 0
+local selected_craft_number = "nothing"
 game_mode = "craft"
 blocks[0]  = { number =  0, name = "nil", set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
 blocks[1]  = { number =  1, name = "grass", set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
@@ -507,13 +508,16 @@ function love.draw()
   end
   
   if game_mode == "craft" then
+    -- print selected craft
+    love.graphics.print(selected_craft_number,8,8)
+
     a = craft_title:getWidth()
     b = room_w * cellsize
     cx = (b-a)/2
     love.graphics.draw(craft_title, cx ,0 , 0.1, 1.0)
 
     recipe_number=1
-
+    selected_craft_number="nothing"
     for y=0,1 do
       for x=0,4 do
         draw_recipe(recipe_number, 320*(x+1),320*(y+1))
@@ -570,11 +574,12 @@ function draw_recipe(recipe_number, x,y)
   love.graphics.print(in1_num,x+(32*3),y+(32*7),0,2)
   love.graphics.print(in2_num,x+(32*6),y+(32*7),0,2)
   --обводка
- 
+
   mouseXpx = love.mouse.getX()
   mouseYpx = love.mouse.getY()
  
   if mouseXpx>x and mouseYpx>y and mouseXpx<x+320 and mouseYpx<y+320 then
+    selected_craft_number=recipe_number
     love.graphics.setLineWidth( 10 ) 
     love.graphics.rectangle("line",x,y,320-5,320-5,10,10)
     love.graphics.setLineWidth( 1 )
@@ -598,6 +603,15 @@ function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
       world[colnum][rownum] = world[colnum][rownum] - 1
     end
   end 
+  if game_mode == "craft" then
+    if selected_craft_number=="nothing" then
+    else
+      first_out = recipes[selected_craft_number]["outs"][1]
+      out_what, out_num = first_out[1], first_out[2]
+      rrr=find_block_by_name(out_what)["number"]
+      inv[rrr]=inv[rrr]+out_num
+    end    
+  end  
 end
 
 function player_tp(targetX, targetY)
