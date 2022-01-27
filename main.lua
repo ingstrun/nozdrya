@@ -65,7 +65,7 @@ inv[1]=1
 inv[2]=5
 inv[5]=0
 inv[4]=0
-inv[8]=0
+inv[8]=2
 inv[3]=0
 inv[10]=666
 local mobs = {}
@@ -76,8 +76,10 @@ mobs[3] = {x = 25, y = 10, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mo
 recipes = {}
 table.insert(recipes, {ins = { {'wood', 3}, {'gold_ore', 1} }, outs = { {'shield', 10}}})
 table.insert(recipes, {ins = { {"dirt" , 2}, {"gold_ore" , 2} }, outs = { {"pick" , 20}}})
-table.insert(recipes, {ins = { {"wood" , 1}, {"gold_ore" , 3} }, outs = { {"sword" , 15}}})
-
+table.insert(recipes, {ins = { {"wood" , 10}, {"gold_ore" , 30} }, outs = { {"sword" , 15}}})
+table.insert(recipes, {ins = { {'wood', 1}, {'bricks', 4} }, outs = { {'dirt', 10}}})
+table.insert(recipes, {ins = { {'wood', 5}, {'gold_ore', 1} }, outs = { {'dirt', 10}}})
+table.insert(recipes, {ins = { {'wood', 2}, {'stone', 1} }, outs = { {'dirt', 10}}})
 
 function explosion(x,y,exbl)
   for ex=x-5,x+5 do
@@ -564,8 +566,10 @@ function draw_recipe(recipe_number, x,y)
 
   love.graphics.setColor(1,0,1) 
   love.graphics.rectangle("line",x+32,y+32,32*5,32*5,10,10)
-  love.graphics.rectangle("line",x+(32*4),y+(32*7),32*1,32*1,10,10)
-  love.graphics.rectangle("line",x+32,y+(32*7),32*1,32*1,10,10)
+  love.graphics.setLineWidth( 3 )
+  love.graphics.rectangle("line",x+(32*4),y+(32*7),32*1,32*1,0,10)
+  love.graphics.rectangle("line",x+32,y+(32*7),32*1,32*1,0,10)
+  love.graphics.setLineWidth( 1 )
   love.graphics.setColor(1,1,1) 
   love.graphics.draw(sprite_to_draw,x+32,y+32,0,5,5)
   love.graphics.draw(sprite_in1,x+(32*4),y+(32*7))
@@ -574,16 +578,39 @@ function draw_recipe(recipe_number, x,y)
   love.graphics.print(in1_num,x+(32*3),y+(32*7),0,2)
   love.graphics.print(in2_num,x+(32*6),y+(32*7),0,2)
   --обводка
-
   mouseXpx = love.mouse.getX()
   mouseYpx = love.mouse.getY()
  
   if mouseXpx>x and mouseYpx>y and mouseXpx<x+320 and mouseYpx<y+320 then
     selected_craft_number=recipe_number
+    if enough_for(recipe_number) then
+      love.graphics.setColor(0,0.5,0)
+    else
+      love.graphics.setColor(1,0,0)  
+    end  
     love.graphics.setLineWidth( 10 ) 
     love.graphics.rectangle("line",x,y,320-5,320-5,10,10)
     love.graphics.setLineWidth( 1 )
+    love.graphics.setColor(0,0,0)
   end  
+end  
+--table.insert(recipes, {ins = { {"wood" , 1}, {"gold_ore" , 3} }, outs = { {"sword" , 15}}})
+function enough_for(recipe_number) 
+  for i, in_rec in pairs(recipes[recipe_number]["ins"]) do
+    in_what_word, in_num = in_rec[1], in_rec[2]
+  end  
+  aaa=find_block_by_name(in_what_word)["number"]
+  --for  do
+    if inv[aaa]>=in_num then
+      result = 1
+    elseif inv[aaa]<in_num then
+      result = false
+    end  
+  --end  
+  return result
+end
+function remove_ins(recipe_number)
+
 end  
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
@@ -603,13 +630,23 @@ function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
       world[colnum][rownum] = world[colnum][rownum] - 1
     end
   end 
+ 
   if game_mode == "craft" then
     if selected_craft_number=="nothing" then
     else
-      first_out = recipes[selected_craft_number]["outs"][1]
-      out_what, out_num = first_out[1], first_out[2]
-      rrr=find_block_by_name(out_what)["number"]
-      inv[rrr]=inv[rrr]+out_num
+      if enough_for(selected_craft_number) then
+        -- add out1
+        first_out = recipes[selected_craft_number]["outs"][1]
+        out_what, out_num = first_out[1], first_out[2]
+        rrr=find_block_by_name(out_what)["number"]
+        inv[rrr]=inv[rrr]+out_num
+
+        remove_ins(selected_craft_number)
+      else
+        --недостаточно  
+        sound_bonk:stop()
+        sound_bonk:play()
+      end  
     end    
   end  
 end
