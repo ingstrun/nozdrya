@@ -572,8 +572,8 @@ function draw_recipe(recipe_number, x,y)
   love.graphics.setLineWidth( 1 )
   love.graphics.setColor(1,1,1) 
   love.graphics.draw(sprite_to_draw,x+32,y+32,0,5,5)
-  love.graphics.draw(sprite_in1,x+(32*4),y+(32*7))
-  love.graphics.draw(sprite_in2,x+32,y+(32*7))
+  love.graphics.draw(sprite_in2,x+(32*4),y+(32*7))
+  love.graphics.draw(sprite_in1,x+32,y+(32*7))
   love.graphics.setColor(0,0,0) 
   love.graphics.print(in1_num,x+(32*3),y+(32*7),0,2)
   love.graphics.print(in2_num,x+(32*6),y+(32*7),0,2)
@@ -598,19 +598,16 @@ end
 function enough_for(recipe_number) 
   for i, in_rec in pairs(recipes[recipe_number]["ins"]) do
     in_what_word, in_num = in_rec[1], in_rec[2]
-  end  
-  aaa=find_block_by_name(in_what_word)["number"]
-  --for  do
-    if inv[aaa]>=in_num then
-      result = 1
-    elseif inv[aaa]<in_num then
-      result = false
-    end  
-  --end  
-  return result
-end
-function remove_ins(recipe_number)
 
+    block_num=find_block_by_name(in_what_word)["number"]
+    if inv[block_num]<in_num then
+      return false
+    end   
+  end  
+  return true
+end
+
+function remove_ins(recipe_number)
 end  
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
