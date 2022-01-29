@@ -61,12 +61,12 @@ blocks[29] = { number = 29, name = "iron", set_key = "_", sprite = "iron.png", p
 local inv = {}
 inv[9]=666
 inv[7]=666
-inv[1]=1
-inv[2]=5
-inv[5]=0
-inv[4]=0
-inv[8]=2
-inv[3]=0
+inv[1]=100
+inv[2]=500
+inv[5]=500
+inv[4]=500
+inv[8]=502
+inv[3]=500
 inv[10]=666
 local mobs = {}
 mobs[1] = {x = 25, y = 5, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "cow"}
@@ -76,7 +76,7 @@ mobs[3] = {x = 25, y = 10, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mo
 recipes = {}
 table.insert(recipes, {ins = { {'wood', 3}, {'gold_ore', 1} }, outs = { {'shield', 10}}})
 table.insert(recipes, {ins = { {"dirt" , 2}, {"gold_ore" , 2} }, outs = { {"pick" , 20}}})
-table.insert(recipes, {ins = { {"wood" , 10}, {"gold_ore" , 30} }, outs = { {"sword" , 15}}})
+table.insert(recipes, {ins = { {"wood" , 1}, {"gold_ore" , 3} }, outs = { {"sword" , 15}}})
 table.insert(recipes, {ins = { {'wood', 1}, {'bricks', 4} }, outs = { {'dirt', 10}}})
 table.insert(recipes, {ins = { {'wood', 5}, {'gold_ore', 1} }, outs = { {'dirt', 10}}})
 table.insert(recipes, {ins = { {'wood', 2}, {'stone', 1} }, outs = { {'dirt', 10}}})
@@ -608,6 +608,12 @@ function enough_for(recipe_number)
 end
 
 function remove_ins(recipe_number)
+  for i, in_rec in pairs(recipes[recipe_number]["ins"]) do 
+    in_what_word, in_num = in_rec[1], in_rec[2] 
+    block_num=find_block_by_name(in_what_word)["number"]
+
+    inv[block_num] = inv[block_num]-in_num  
+  end   
 end  
 
 function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
