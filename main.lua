@@ -33,6 +33,8 @@ local boss_live = 10
 local storona = 0
 local selected_craft_number = "nothing"
 game_mode = "craft"
+local v_prosh
+
 blocks[0]  = { number =  0, name = "nil", set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
 blocks[1]  = { number =  1, name = "grass", set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[2]  = { number =  2, name = "dirt", set_key = "2", sprite = "dirt.png", passable = false, breakable = true, collectable = false, pushable = false }
@@ -195,7 +197,6 @@ function can_walk(x,y)
 end
 
 function love.update(dt)
-
   if game_mode ~= "play" then
     return
   end
@@ -206,6 +207,11 @@ function love.update(dt)
   else
     game_seconds = game_seconds + dt
   end  
+  if day_night() == "night" and v_prosh == "day" then
+    spawn_mobs(6,"cow")
+  end  
+
+  v_prosh = day_night()
   mouseXpx = love.mouse.getX()
   mouseX = math.floor(mouseXpx / cellsize)
   mouseYpx = love.mouse.getY()
@@ -673,7 +679,7 @@ function spawn_mobs(number,who)
   for s=0, number do
     randomX = (playerX-15)+math.random(0,30)
     randomY = (playerY-15)+math.random(0,30)
-    newcow = {x = randomX, y = randomY, max_hitpoints = 5, hitpoints = 5, bonks_left = 15, mob_type = "cow"}
+    newcow = {x = randomX, y = randomY, max_hitpoints = 5, hitpoints = 5, bonks_left = 15, mob_type = who}
     table.insert(mobs, newcow)
   end  
 end  
@@ -745,7 +751,7 @@ function love.keypressed( key )
     init_world()
   end
   if key == "f2" then
-    spawn_mobs(6, "cow")
+    spawn_mobs(6, "pig")
   end
 
   if key == "up" then
