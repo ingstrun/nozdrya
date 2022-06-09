@@ -378,12 +378,19 @@ function love.load()
   music = love.audio.newSource("music.mp3", "stream")
   --love.audio.play(music)
 end
-
-function love.draw()
-  local sunnight = sun and night
+function day_night() 
   local day_plus_night = 240
   local daytime = game_seconds % day_plus_night
   if daytime < day_plus_night / 2 then
+    return "day" 
+  else
+    return "night" 
+  end  
+end  
+function love.draw()
+  local sunnight = sun and night
+  
+  if day_night() == "day" then
     sunnight = sun
     red = 13/100
     green = 68/100
@@ -490,6 +497,7 @@ function love.draw()
   end
 
   -- SUN!
+  day_plus_night = 240
   local sunpos = ( game_seconds % (day_plus_night / 2) ) / (day_plus_night / 2)
   love.graphics.print(sunpos, cellsize*10,cellsize*11, 0, 2)
   love.graphics.draw(sunnight,sunpos*room_w*cellsize,cellsize*3)
@@ -660,7 +668,15 @@ end
 function player_tp(targetX, targetY)
   playerX, playerY = targetX, targetY
 end
-
+--this_room_start_x
+function spawn_mobs(number,who)
+  for s=0, number do
+    randomX = (playerX-15)+math.random(0,30)
+    randomY = (playerY-15)+math.random(0,30)
+    newcow = {x = randomX, y = randomY, max_hitpoints = 5, hitpoints = 5, bonks_left = 15, mob_type = "cow"}
+    table.insert(mobs, newcow)
+  end  
+end  
 function love.keypressed( key )
 
   if key == "escape" then
@@ -727,6 +743,9 @@ function love.keypressed( key )
   end
   if key == "g" then
     init_world()
+  end
+  if key == "f2" then
+    spawn_mobs(6, "cow")
   end
 
   if key == "up" then
