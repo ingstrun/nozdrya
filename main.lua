@@ -200,9 +200,12 @@ function love.update(dt)
     return
   end
   gameover = hitpoints<1
-
-  game_seconds = game_seconds + dt
-
+  
+  if love.keyboard.isDown("`") then
+    game_seconds = game_seconds + dt*25
+  else
+    game_seconds = game_seconds + dt
+  end  
   mouseXpx = love.mouse.getX()
   mouseX = math.floor(mouseXpx / cellsize)
   mouseYpx = love.mouse.getY()
