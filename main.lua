@@ -350,7 +350,12 @@ end
 function love.load()
   init_world()
   love.window.setTitle("Ноздря")
-  love.window.setMode(cellsize * room_w, cellsize * room_h)
+  love.window.setMode(0, 0, {fullscreen=true})
+  screen_height = love.graphics.getHeight()
+  screen_width = love.graphics.getWidth()
+
+  room_w = screen_width / cellsize
+  room_h = screen_height / cellsize
 
   Player = love.graphics.newImage("burger.png")
   Player2 = love.graphics.newImage("burger2.png")
