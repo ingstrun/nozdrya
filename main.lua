@@ -52,7 +52,6 @@ blocks[13] = { number = 13, name = "water", set_key = "9", sprite = "water.png",
 blocks[14] = { number = 14, name = "chest", set_key = "/", sprite = "chest.png", passable = false, breakable = false, collectable = false, pushable = true }
 blocks[15] = { number = 15, name = "boom1", set_key = "=", sprite = "Boom1.png", passable = true, breakable = false, collectable = false, pushable = false }
 blocks[16] = { number = 16, name = "boom2", set_key = "=", sprite = "Boom2.png", passable = true, breakable = false, collectable = false, pushable = false }
-blocks[17] = { number = 17, name = "ckull_block", set_key = "=", sprite = "skull_block.png", passable = false, breakable = false, collectable = false, pushable = false }
                                                                                                                                                                         
 for bombs = 17,25 do                                                                                                                                           
   blocks[bombs] = { number = bombs, name = "bomb", set_key = ".", sprite = "TNTboom.png", passable = false, breakable = false, collectable = false, pushable = true }
@@ -61,6 +60,7 @@ blocks[26] = { number = 26, name = "leaves", set_key = "\\", sprite = "leaves.pn
 blocks[27] = { number = 27, name = "stone_and_ice", set_key = "\\", sprite = "stone and ice.png", passable = false, breakable = true, collectable = true, pushable = false }
 blocks[28] = { number = 28, name = "furnace_for_pizza_no_active", set_key = "8", sprite = "furnaceforpizzanoactive.png", passable = true, breakable = false, collectable = false, pushable = false }
 blocks[29] = { number = 29, name = "iron", set_key = "_", sprite = "iron.png", passable = false, breakable = true, collectable = false, pushable = false }
+blocks[30] = { number = 30, name = "skull_block", set_key = "]", sprite = "skull_block.png", passable = false, breakable = false, collectable = false, pushable = false }
 
 local inv = {}
 inv[9]=666
@@ -188,6 +188,9 @@ function init_world()
     io.close(file)
 
   explosion(10,10,16)
+  for x = 0, world_w do
+    world[x][room_h] = 30
+  end  
 end
 
 function in_world(x,y)
