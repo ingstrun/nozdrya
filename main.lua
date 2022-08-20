@@ -4,7 +4,7 @@ local run = 0
 local cellsize = 32
 local room_w = 70
 local room_h = 40
-local world_w = 5 * 70
+local world_w = 6 * 70
 local world_h = 8 * 40
 local dange_h = 9
 local dange_w = 8
@@ -187,9 +187,16 @@ function init_world()
     end
     io.close(file)
 
+    --загораживалка
+
   explosion(10,10,16)
   for x = 0, world_w do
-    world[x][room_h] = 30
+    world[x][room_h-1] = 30
+  end 
+  gloobina=math.random(room_h, room_h*2)
+  kordinata=math.random(0, 70)
+  for y = 0, gloobina do
+    world[kordinata][y] = 0
   end  
 end
 
