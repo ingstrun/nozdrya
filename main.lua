@@ -193,10 +193,14 @@ function init_world()
   for x = 0, world_w do
     world[x][room_h-1] = 30
   end 
+  cave_storon = math.random(0,3)
   gloobina=math.random(room_h, room_h*2)
-  kordinata=math.random(0, 70)
+  koordinata=math.random(0, 70)+2
   for y = 0, gloobina do
-    world[kordinata][y] = 0
+    world[koordinata][y] = 0
+    for x = -math.random(0,2), math.random(0,2) do
+      world[x+koordinata][y] = 0
+    end  
   end  
 end
 
