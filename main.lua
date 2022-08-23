@@ -34,6 +34,7 @@ local storona = 0
 local selected_craft_number = "nothing"
 game_mode = "craft"
 local v_prosh
+local r_svet = 10
 
 blocks[0]  = { number =  0, name = "nil", set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
 blocks[1]  = { number =  1, name = "grass", set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
@@ -466,7 +467,6 @@ function love.draw()
       elseif sprite_to_draw then
         love.graphics.draw(sprite_to_draw, cellsize*x, cellsize*y)
       end
-
     end
   end
 
@@ -484,6 +484,18 @@ function love.draw()
     love.graphics.print(mob.hitpoints,cellsize*(mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
   end
 
+  --темнота
+  love.graphics.setColor(0, 0, 0)
+  for x = 0, room_w do
+    for y = 0, room_h do
+      dist_to_player = math.abs(x-playerX)+math.abs(y-playerY)
+      if dist_to_player > r_svet then
+        --закрасить чёрным
+        love.graphics.rectangle("fill", cellsize*x, cellsize*y, cellsize, cellsize)
+      end  
+    end
+  end
+  love.graphics.setColor(1, 1, 1)
   if storona == "up" then
     love.graphics.draw(swordup, cellsize*(playerX-this_room_start_x), cellsize*(playerY-1-this_room_start_y) )
   elseif storona == "down" then
@@ -518,6 +530,8 @@ function love.draw()
   if armor_sprite then
     love.graphics.draw(armor_sprite, cellsize*(playerX-this_room_start_x), cellsize*(playerY-this_room_start_y) )
   end
+  --svet
+  love.graphics.print(r_svet,10,10)
 
   --Жижа
   for hit=1,hitpoints do
@@ -775,7 +789,15 @@ function love.keypressed( key )
   if key == "f2" then
     spawn_mobs(6, "pig")
   end
-
+  if key == "kp+" then
+    r_svet=r_svet+1
+  end
+  if r_svet>0 then
+    if key == "kp-" then
+      r_svet=r_svet-1
+    end
+  else
+  end  
   if key == "up" then
     storona = "up"
   elseif key == "down" then
