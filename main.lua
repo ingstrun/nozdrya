@@ -485,10 +485,12 @@ function love.draw()
   end
 
   --темнота
-  love.graphics.setColor(0, 0, 0)
+  love.graphics.setColor(0, 0, 0, 1)
   for x = 0, room_w do
     for y = 0, room_h do
-      dist_to_player = math.abs(x-playerX)+math.abs(y-playerY)
+      dx = math.abs(x-playerX)
+      dy = math.abs(y-playerY)
+      dist_to_player = math.sqrt(dx*dx+dy*dy)
       if dist_to_player > r_svet then
         --закрасить чёрным
         love.graphics.rectangle("fill", cellsize*x, cellsize*y, cellsize, cellsize)
