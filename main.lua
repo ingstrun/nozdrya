@@ -34,7 +34,7 @@ local storona = 0
 local selected_craft_number = "nothing"
 game_mode = "craft"
 local v_prosh
-local r_svet = 10
+local r_svet = 10000000000
 
 blocks[0]  = { number =  0, name = "nil", set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
 blocks[1]  = { number =  1, name = "grass", set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
@@ -62,6 +62,7 @@ blocks[27] = { number = 27, name = "stone_and_ice", set_key = "\\", sprite = "st
 blocks[28] = { number = 28, name = "furnace_for_pizza_no_active", set_key = "8", sprite = "furnaceforpizzanoactive.png", passable = true, breakable = false, collectable = false, pushable = false }
 blocks[29] = { number = 29, name = "iron", set_key = "_", sprite = "iron.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[30] = { number = 30, name = "skull_block", set_key = "]", sprite = "skull_block.png", passable = false, breakable = false, collectable = false, pushable = false }
+blocks[31]  = { number =  31, name = "lamp", set_key = "_", sprite = "flashlight.png", passable = true, breakable = false, collectable = true, pushable = false }
 
 local inv = {}
 inv[9]=666
@@ -73,6 +74,7 @@ inv[4]=500
 inv[8]=502
 inv[3]=500
 inv[10]=666
+inv[31]=0
 local mobs = {}
 mobs[1] = {x = 25, y = 5, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "cow"}
 mobs[2] = {x = 25, y = 15, max_hitpoints = 30, hitpoints = 10, bonks_left = 66, mob_type = "boss"}
@@ -242,6 +244,15 @@ function love.update(dt)
 
   if game_seconds > last_tick + 0.3 then
     -- tick
+
+    if day_night()=="day" and this_room_start_y<1 then
+      r_svet = 1000000000
+    elseif inv[31] > 9 then
+      r_svet = 10
+    else   
+      r_svet = 3 
+    end  
+
     sword = {}
     sword.x=playerX
     sword.y=playerY
@@ -488,10 +499,10 @@ function love.draw()
   love.graphics.setColor(0, 0, 0, 1)
   for x = 0, room_w do
     for y = 0, room_h do
-      dx = math.abs(x-playerX)
-      dy = math.abs(y-playerY)
+      dx = math.abs(this_room_start_x + x-playerX)
+      dy = math.abs(this_room_start_y + y-playerY)
       dist_to_player = math.sqrt(dx*dx+dy*dy)
-      if dist_to_player > r_svet then
+      if dist_to_player > r_svet +0.25  then
         --закрасить чёрным
         love.graphics.rectangle("fill", cellsize*x, cellsize*y, cellsize, cellsize)
       end  
