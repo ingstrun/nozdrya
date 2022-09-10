@@ -62,7 +62,9 @@ blocks[27] = { number = 27, name = "stone_and_ice", set_key = "\\", sprite = "st
 blocks[28] = { number = 28, name = "furnace_for_pizza_no_active", set_key = "8", sprite = "furnaceforpizzanoactive.png", passable = true, breakable = false, collectable = false, pushable = false }
 blocks[29] = { number = 29, name = "iron", set_key = "_", sprite = "iron.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[30] = { number = 30, name = "skull_block", set_key = "]", sprite = "skull_block.png", passable = false, breakable = false, collectable = false, pushable = false }
-blocks[31]  = { number =  31, name = "lamp", set_key = "_", sprite = "flashlight.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[31] = { number =  31, name = "lamp", set_key = "_", sprite = "flashlight.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[32] = { number =  32, name = "bow", set_key = "_", sprite = "onion.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[33] = { number =  33, name = "arrow", set_key = "_", sprite = "arrow.png", passable = true, breakable = false, collectable = true, pushable = false }
 
 local inv = {}
 inv[9]=666
@@ -87,6 +89,8 @@ table.insert(recipes, {ins = { {"wood" , 1}, {"gold_ore" , 3} }, outs = { {"swor
 table.insert(recipes, {ins = { {'wood', 1}, {'bricks', 4} }, outs = { {'dirt', 10}}})
 table.insert(recipes, {ins = { {'wood', 5}, {'gold_ore', 1} }, outs = { {'dirt', 10}}})
 table.insert(recipes, {ins = { {'wood', 2}, {'stone', 1} }, outs = { {'dirt', 10}}})
+table.insert(recipes, {ins = { {'wood', 1}, {'wood', 1} }, outs = { {'bow', 1}}})
+table.insert(recipes, {ins = { {'wood', 2}, {'stone', 1} }, outs = { {'arrow', 10}}})
 
 function explosion(x,y,exbl)
   for ex=x-5,x+5 do
@@ -391,6 +395,7 @@ function love.load()
   heart = love.graphics.newImage("heart.png")
   rip = love.graphics.newImage("tomb.png")
   die = love.graphics.newImage("gameover.png")
+  sprite["morshu"] = love.graphics.newImage("morshu.png")
   sprite["cow"] = love.graphics.newImage("cow.png")
   sprite["pig"] = love.graphics.newImage("pig.png")
   sprite["armor1"] = love.graphics.newImage("armor1.png")
@@ -708,8 +713,10 @@ function love.mousepressed( mouseXpx, mouseYpx, button, istouch, presses )
         first_out = recipes[selected_craft_number]["outs"][1]
         out_what, out_num = first_out[1], first_out[2]
         rrr=find_block_by_name(out_what)["number"]
-        inv[rrr]=inv[rrr]+out_num
-
+        if inv[rrr] == nil then
+          inv[rrr]=0
+        end
+        inv[rrr] = inv[rrr] + out_num
         remove_ins(selected_craft_number)
       else
         --недостаточно  
