@@ -81,6 +81,7 @@ local mobs = {}
 mobs[1] = {x = 25, y = 5, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "cow"}
 mobs[2] = {x = 25, y = 15, max_hitpoints = 30, hitpoints = 10, bonks_left = 66, mob_type = "boss"}
 mobs[3] = {x = 25, y = 10, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "pig"}
+mobs[4] = {x = 20, y = 18, max_hitpoints = 6666, hitpoints = 6666, bonks_left = 0, mob_type = "morshu"}
 
 recipes = {}
 table.insert(recipes, {ins = { {'wood', 3}, {'gold_ore', 1} }, outs = { {'shield', 10}}})
@@ -328,7 +329,7 @@ function love.update(dt)
         end
       end
 
-      mob_damage = { boss = 3, cow = 1, pig = 0 }
+      mob_damage = { boss = 3, cow = 1, pig = 0,morshu = 0 }
       damage=mob_damage[ mob["mob_type"] ]
 
       if inv[10]>0 then
@@ -496,7 +497,12 @@ function love.draw()
       love.graphics.draw(sprite.cow, cellsize * (mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
     elseif mob ["mob_type"] == "pig" then
       love.graphics.draw(sprite.pig, cellsize * (mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
+    elseif mob ["mob_type"] == "morshu" then
+      love.graphics.draw(sprite.morshu, cellsize * (mob.x-this_room_start_x-1), cellsize*(mob.y-this_room_start_y-1))  
     end
+    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.print(mob.hitpoints,cellsize*(mob.x-this_room_start_x)-2, cellsize*(mob.y-this_room_start_y)+2)
+    love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(mob.hitpoints,cellsize*(mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
   end
 
