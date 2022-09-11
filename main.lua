@@ -32,7 +32,8 @@ local blocks = {}
 local boss_live = 10
 local storona = 0
 local selected_craft_number = "nothing"
-game_mode = "craft"
+local selected_price_number = "nothing"
+game_mode = "shop"
 local v_prosh
 local r_svet = 10000000000
 
@@ -53,7 +54,7 @@ blocks[13] = { number = 13, name = "water", set_key = "9", sprite = "water.png",
 blocks[14] = { number = 14, name = "chest", set_key = "/", sprite = "chest.png", passable = false, breakable = false, collectable = false, pushable = true }
 blocks[15] = { number = 15, name = "boom1", set_key = "=", sprite = "Boom1.png", passable = true, breakable = false, collectable = false, pushable = false }
 blocks[16] = { number = 16, name = "boom2", set_key = "=", sprite = "Boom2.png", passable = true, breakable = false, collectable = false, pushable = false }
-                                                                                                                                                                        
+
 for bombs = 17,25 do                                                                                                                                           
   blocks[bombs] = { number = bombs, name = "bomb", set_key = ".", sprite = "TNTboom.png", passable = false, breakable = false, collectable = false, pushable = true }
 end
@@ -65,6 +66,7 @@ blocks[30] = { number = 30, name = "skull_block", set_key = "]", sprite = "skull
 blocks[31] = { number =  31, name = "lamp", set_key = "_", sprite = "flashlight.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[32] = { number =  32, name = "bow", set_key = "_", sprite = "onion.png", passable = true, breakable = false, collectable = true, pushable = false }
 blocks[33] = { number =  33, name = "arrow", set_key = "_", sprite = "arrow.png", passable = true, breakable = false, collectable = true, pushable = false }
+blocks[34] = { number = 34, name = "rupies", set_key = "r", sprite = "ruby.png", passable = true, breakable = false, collectable = true, pushable = false }  
 
 local inv = {}
 inv[9]=666
@@ -92,6 +94,11 @@ table.insert(recipes, {ins = { {'wood', 5}, {'gold_ore', 1} }, outs = { {'dirt',
 table.insert(recipes, {ins = { {'wood', 2}, {'stone', 1} }, outs = { {'dirt', 10}}})
 table.insert(recipes, {ins = { {'wood', 1}, {'wood', 1} }, outs = { {'bow', 1}}})
 table.insert(recipes, {ins = { {'wood', 2}, {'stone', 1} }, outs = { {'arrow', 10}}})
+
+prices = {}
+table.insert(prices, {what = "bow", price = 3, how_many = 1})
+table.insert(prices, {what = "arrow", price = 1, how_many = 20})
+table.insert(prices, {what = "lamp", price = 10, how_many = 1})
 
 function explosion(x,y,exbl)
   for ex=x-5,x+5 do
@@ -252,7 +259,7 @@ function love.update(dt)
 
     if day_night()=="day" and this_room_start_y<1 then
       r_svet = 1000000000
-    elseif inv[31] > 9 then
+    elseif inv[31] > 0 then
       r_svet = 10
     else   
       r_svet = 3 
@@ -332,14 +339,17 @@ function love.update(dt)
       mob_damage = { boss = 3, cow = 1, pig = 0,morshu = 0 }
       damage=mob_damage[ mob["mob_type"] ]
 
-      if inv[10]>0 then
-       if playerY==mob.y and playerX==mob.x then
-        inv[10]=inv[10]-damage
-       end
-      else
-        hitpoints=hitpoints-1
-        sound_oof:stop()
-        sound_oof:play()
+      if playerY==mob.y and playerX==mob.x then
+        if mob["mob_type"] == "morshu" then
+          game_mode="shop"
+          playerX=playerX-1
+        elseif inv[10]>0 then
+          inv[10]=inv[10]-damage
+        else
+          hitpoints=hitpoints-1
+          sound_oof:stop()
+          sound_oof:play()
+        end
       end
 
       if inv[9]>0 and sword.y==mob.y and sword.x==mob.x then
@@ -609,6 +619,26 @@ function love.draw()
       end
     end  
   end
+
+  if game_mode == "shop" then
+    -- print selected craft
+    love.graphics.print(selected_price_number,8,8)
+
+    a = craft_title:getWidth()
+    b = room_w * cellsize
+    cx = (b-a)/2
+    love.graphics.print("магазин моршу", 16, 16)
+    --love.graphics.draw(craft_title, cx ,0 , 0.1, 1.0)
+
+    price_number=1
+    selected_price_number="nothing"
+    for y=0,1 do
+      for x=0,4 do
+        draw_price(price_number, 320*(x+1),320*(y+1))
+        price_number=price_number+1
+      end
+    end  
+  end
 end
 
 function find_block_by_name(name)
@@ -676,6 +706,69 @@ function draw_recipe(recipe_number, x,y)
     love.graphics.setColor(0,0,0)
   end  
 end  
+function draw_price(price_number, x,y)
+  if price_number%2>0 then
+    love.graphics.setColor(1, 1, 1)
+  else
+    love.graphics.setColor(0,1,1)  
+  end  
+  love.graphics.rectangle("fill",x,y,320,320,10,10)
+  love.graphics.setColor(0, 0, 0)
+  if price_number > #prices then
+    return
+  end
+  out_what, out_num = prices[price_number]["what"], prices[price_number]["how_many"]
+
+  in1_what, in1_num = "rupies", prices[price_number]["price"]
+
+  local sprite_to_draw = find_block_by_name(out_what)["img"]
+  local sprite_in1 = find_block_by_name(in1_what)["img"]
+
+  love.graphics.print("X"..out_num,x+200,y+80,0,4)
+  love.graphics.print("X",x+(32*2.5),y+(32*7),0,2)
+
+  love.graphics.setColor(1,0,1) 
+  love.graphics.rectangle("line",x+32,y+32,32*5,32*5,10,10)
+  love.graphics.setLineWidth( 3 )
+  love.graphics.rectangle("line",x+32,y+(32*7),32*1,32*1,0,10)
+  love.graphics.setLineWidth( 1 )
+
+  love.graphics.setColor(1,1,1) 
+  love.graphics.draw(sprite_to_draw,x+32,y+32,0,5,5)
+  love.graphics.draw(sprite_in1,x+32,y+(32*7))
+  love.graphics.setColor(0,0,0)
+
+  love.graphics.print(in1_num,x+(32*3),y+(32*7),0,2)
+  --обводка
+  mouseXpx = love.mouse.getX()
+  mouseYpx = love.mouse.getY()
+ 
+  if mouseXpx>x and mouseYpx>y and mouseXpx<x+320 and mouseYpx<y+320 then
+    selected_price_number=price_number
+    if enough_rupies(price_number) then
+      love.graphics.setColor(0,0.5,0)
+    else
+      love.graphics.setColor(1,0,0)  
+    end  
+    love.graphics.setLineWidth( 10 ) 
+    love.graphics.rectangle("line",x,y,320-5,320-5,10,10)
+    love.graphics.setLineWidth( 1 )
+    love.graphics.setColor(0,0,0)
+  end  
+end 
+
+function enough_rupies(price_number)  
+  if inv[find_block_by_name("rupies")] == nil then 
+    return false
+  end
+
+  if prices[price_number]["price"] <= inv[find_block_by_name("rupies")] then
+    return true
+  else
+    return false   
+  end  
+end
+
 --table.insert(recipes, {ins = { {"wood" , 1}, {"gold_ore" , 3} }, outs = { {"sword" , 15}}})
 function enough_for(recipe_number) 
   for i, in_rec in pairs(recipes[recipe_number]["ins"]) do
@@ -753,10 +846,10 @@ end
 function love.keypressed( key )
 
   if key == "escape" then
-    if  game_mode == "mainmenu" then
-      game_mode = "play"
-    else
+    if  game_mode == "play" then
       game_mode = "mainmenu"
+    else
+      game_mode = "play"
     end
   end
   
