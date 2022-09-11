@@ -498,7 +498,12 @@ function love.draw()
     elseif mob ["mob_type"] == "pig" then
       love.graphics.draw(sprite.pig, cellsize * (mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
     elseif mob ["mob_type"] == "morshu" then
-      love.graphics.draw(sprite.morshu, cellsize * (mob.x-this_room_start_x-1), cellsize*(mob.y-this_room_start_y-1))  
+      if playerX<mob.x then
+        flip_morshu=1
+      else
+        flip_morshu=-1
+      end    
+        love.graphics.draw(sprite.morshu, cellsize * (mob.x-this_room_start_x+0.5), cellsize*(mob.y-this_room_start_y+0.5), 0, flip_morshu, 1, 48, 48)  
     end
     love.graphics.setColor(0, 0, 0, 1)
     love.graphics.print(mob.hitpoints,cellsize*(mob.x-this_room_start_x)-2, cellsize*(mob.y-this_room_start_y)+2)
