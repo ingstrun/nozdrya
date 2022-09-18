@@ -33,10 +33,10 @@ local boss_live = 10
 local storona = 0
 local selected_craft_number = "nothing"
 local selected_price_number = "nothing"
-game_mode = "shop"
-local v_prosh
+game_mode = "craft"
+local v_prosh 
 local r_svet = 10000000000
-
+local type_craft = "shop"
 blocks[0]  = { number =  0, name = "nil", set_key = "0", sprite = nil, passable = true, breakable = false, collectable = false, pushable = false }
 blocks[1]  = { number =  1, name = "grass", set_key = "1", sprite = "grass.png", passable = false, breakable = true, collectable = false, pushable = false }
 blocks[2]  = { number =  2, name = "dirt", set_key = "2", sprite = "dirt.png", passable = false, breakable = true, collectable = false, pushable = false }
@@ -86,19 +86,18 @@ mobs[3] = {x = 25, y = 10, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mo
 mobs[4] = {x = 20, y = 18, max_hitpoints = 6666, hitpoints = 6666, bonks_left = 0, mob_type = "morshu"}
 
 recipes = {}
-table.insert(recipes, {ins = { {'wood', 3}, {'gold_ore', 1} }, outs = { {'shield', 10}}})
-table.insert(recipes, {ins = { {"dirt" , 2}, {"gold_ore" , 2} }, outs = { {"pick" , 20}}})
-table.insert(recipes, {ins = { {"wood" , 1}, {"gold_ore" , 3} }, outs = { {"sword" , 15}}})
-table.insert(recipes, {ins = { {'wood', 1}, {'bricks', 4} }, outs = { {'dirt', 10}}})
-table.insert(recipes, {ins = { {'wood', 5}, {'gold_ore', 1} }, outs = { {'dirt', 10}}})
-table.insert(recipes, {ins = { {'wood', 2}, {'stone', 1} }, outs = { {'dirt', 10}}})
-table.insert(recipes, {ins = { {'wood', 1}, {'wood', 1} }, outs = { {'bow', 1}}})
-table.insert(recipes, {ins = { {'wood', 2}, {'stone', 1} }, outs = { {'arrow', 10}}})
-
-prices = {}
-table.insert(prices, {what = "bow", price = 3, how_many = 1})
-table.insert(prices, {what = "arrow", price = 1, how_many = 20})
-table.insert(prices, {what = "lamp", price = 10, how_many = 1})
+table.insert(recipes, {type = "craft", ins = { {'wood', 3}, {'gold_ore', 1} }, outs = { {'shield', 10}}})
+table.insert(recipes, {type = "craft",ins = { {"dirt" , 2}, {"gold_ore" , 2} }, outs = { {"pick" , 20}}})
+table.insert(recipes, {type = "craft",ins = { {"wood" , 1}, {"gold_ore" , 3} }, outs = { {"sword" , 15}}})
+table.insert(recipes, {type = "craft",ins = { {'wood', 1}, {'bricks', 4} }, outs = { {'dirt', 10}}})
+table.insert(recipes, {type = "craft",ins = { {'wood', 5}, {'gold_ore', 1} }, outs = { {'dirt', 10}}})
+table.insert(recipes, {type = "craft",ins = { {'wood', 2}, {'stone', 1} }, outs = { {'dirt', 10}}})
+table.insert(recipes, {type = "craft",ins = { {'wood', 1}, {'wood', 1} }, outs = { {'bow', 1}}})
+table.insert(recipes, {type = "craft",ins = { {'wood', 2}, {'stone', 1} }, outs = { {'arrow', 10}}})
+--price
+table.insert(recipes, {type = "shop",ins = { {'rupies', 3}}, outs = { {'bow', 1}}})
+table.insert(recipes, {type = "shop",ins = { {'rupies', 1}}, outs = { {'arrow', 20}}})
+table.insert(recipes, {type = "shop",ins = { {'rupies', 10}}, outs = { {'lamp', 1}}})
 
 function explosion(x,y,exbl)
   for ex=x-5,x+5 do
@@ -341,7 +340,8 @@ function love.update(dt)
 
       if playerY==mob.y and playerX==mob.x then
         if mob["mob_type"] == "morshu" then
-          game_mode="shop"
+          game_mode="craft"
+          type_craft="shop"
           playerX=playerX-1
         elseif inv[10]>0 then
           inv[10]=inv[10]-damage
@@ -608,14 +608,24 @@ function love.draw()
     a = craft_title:getWidth()
     b = room_w * cellsize
     cx = (b-a)/2
-    love.graphics.draw(craft_title, cx ,0 , 0.1, 1.0)
+    if type_craft == "craft" then
+      love.graphics.draw(craft_title, cx ,0 , 0.1, 1.0)
+    elseif type_craft == "shop" then
+      love.graphics.print("MORSHU", 80, 80)
+    end
 
-    recipe_number=1
+
+    --table.insert(recipes, {type = "craft",ins = { {'wood', 2}, {'stone', 1} }, outs = { {'arrow', 10}}})
+
+    recipe_number=0
     selected_craft_number="nothing"
     for y=0,1 do
       for x=0,4 do
-        draw_recipe(recipe_number, 320*(x+1),320*(y+1))
         recipe_number=recipe_number+1
+        if type_craft == recipes[recipe_number]["type"] then
+          draw_recipe(recipe_number, 320*(x+1),320*(y+1))
+        else
+        end
       end
     end  
   end
@@ -627,7 +637,6 @@ function love.draw()
     a = craft_title:getWidth()
     b = room_w * cellsize
     cx = (b-a)/2
-    love.graphics.print("магазин моршу", 16, 16)
     --love.graphics.draw(craft_title, cx ,0 , 0.1, 1.0)
 
     price_number=1
@@ -666,15 +675,17 @@ function draw_recipe(recipe_number, x,y)
   in1 = recipes[recipe_number]["ins"][1]
   in1_what, in1_num = in1[1], in1[2]
   in2 = recipes[recipe_number]["ins"][2]
-  in2_what, in2_num = in2[1], in2[2]
+  yes_in_2 = true
+  if in2 == nil then
+    yes_in_2 = false
+  else  
+    in2_what, in2_num = in2[1], in2[2]
+  end
 
   local sprite_to_draw = find_block_by_name(out_what)["img"]
   local sprite_in1 = find_block_by_name(in1_what)["img"]
-  local sprite_in2 = find_block_by_name(in2_what)["img"]
-
   love.graphics.print("X"..out_num,x+200,y+80,0,4)
   love.graphics.print("X",x+(32*2.5),y+(32*7),0,2)
-  love.graphics.print("X",x+(32*5.5),y+(32*7),0,2)
 
   love.graphics.setColor(1,0,1) 
   love.graphics.rectangle("line",x+32,y+32,32*5,32*5,10,10)
@@ -684,11 +695,16 @@ function draw_recipe(recipe_number, x,y)
   love.graphics.setLineWidth( 1 )
   love.graphics.setColor(1,1,1) 
   love.graphics.draw(sprite_to_draw,x+32,y+32,0,5,5)
-  love.graphics.draw(sprite_in2,x+(32*4),y+(32*7))
   love.graphics.draw(sprite_in1,x+32,y+(32*7))
   love.graphics.setColor(0,0,0) 
   love.graphics.print(in1_num,x+(32*3),y+(32*7),0,2)
-  love.graphics.print(in2_num,x+(32*6),y+(32*7),0,2)
+  if yes_in_2 then  
+    love.graphics.setColor(1,1,1) 
+    local sprite_in2 = find_block_by_name(in2_what)["img"]
+    love.graphics.draw(sprite_in2,x+(32*4),y+(32*7)) 
+    love.graphics.print(in2_num,x+(32*6),y+(32*7),0,2)
+    love.graphics.print("X",x+(32*5.5),y+(32*7),0,2)
+  end
   --обводка
   mouseXpx = love.mouse.getX()
   mouseYpx = love.mouse.getY()
@@ -706,68 +722,7 @@ function draw_recipe(recipe_number, x,y)
     love.graphics.setColor(0,0,0)
   end  
 end  
-function draw_price(price_number, x,y)
-  if price_number%2>0 then
-    love.graphics.setColor(1, 1, 1)
-  else
-    love.graphics.setColor(0,1,1)  
-  end  
-  love.graphics.rectangle("fill",x,y,320,320,10,10)
-  love.graphics.setColor(0, 0, 0)
-  if price_number > #prices then
-    return
-  end
-  out_what, out_num = prices[price_number]["what"], prices[price_number]["how_many"]
 
-  in1_what, in1_num = "rupies", prices[price_number]["price"]
-
-  local sprite_to_draw = find_block_by_name(out_what)["img"]
-  local sprite_in1 = find_block_by_name(in1_what)["img"]
-
-  love.graphics.print("X"..out_num,x+200,y+80,0,4)
-  love.graphics.print("X",x+(32*2.5),y+(32*7),0,2)
-
-  love.graphics.setColor(1,0,1) 
-  love.graphics.rectangle("line",x+32,y+32,32*5,32*5,10,10)
-  love.graphics.setLineWidth( 3 )
-  love.graphics.rectangle("line",x+32,y+(32*7),32*1,32*1,0,10)
-  love.graphics.setLineWidth( 1 )
-
-  love.graphics.setColor(1,1,1) 
-  love.graphics.draw(sprite_to_draw,x+32,y+32,0,5,5)
-  love.graphics.draw(sprite_in1,x+32,y+(32*7))
-  love.graphics.setColor(0,0,0)
-
-  love.graphics.print(in1_num,x+(32*3),y+(32*7),0,2)
-  --обводка
-  mouseXpx = love.mouse.getX()
-  mouseYpx = love.mouse.getY()
- 
-  if mouseXpx>x and mouseYpx>y and mouseXpx<x+320 and mouseYpx<y+320 then
-    selected_price_number=price_number
-    if enough_rupies(price_number) then
-      love.graphics.setColor(0,0.5,0)
-    else
-      love.graphics.setColor(1,0,0)  
-    end  
-    love.graphics.setLineWidth( 10 ) 
-    love.graphics.rectangle("line",x,y,320-5,320-5,10,10)
-    love.graphics.setLineWidth( 1 )
-    love.graphics.setColor(0,0,0)
-  end  
-end 
-
-function enough_rupies(price_number)  
-  if inv[find_block_by_name("rupies")] == nil then 
-    return false
-  end
-
-  if prices[price_number]["price"] <= inv[find_block_by_name("rupies")] then
-    return true
-  else
-    return false   
-  end  
-end
 
 --table.insert(recipes, {ins = { {"wood" , 1}, {"gold_ore" , 3} }, outs = { {"sword" , 15}}})
 function enough_for(recipe_number) 
@@ -775,8 +730,8 @@ function enough_for(recipe_number)
     in_what_word, in_num = in_rec[1], in_rec[2]
 
     block_num=find_block_by_name(in_what_word)["number"]
-    if inv[block_num]<in_num then
-      return false
+    if inv[block_num] == nil or inv[block_num]<in_num then
+      return false  
     end   
   end  
   return true
@@ -853,7 +808,8 @@ function love.keypressed( key )
     end
   end
   
-  if key == "k" then    
+  if key == "k" then
+    type_craft = "craft"    
     if  game_mode == "craft" then
       game_mode = "play"
     else
