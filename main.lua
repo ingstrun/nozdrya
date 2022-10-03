@@ -619,12 +619,18 @@ function love.draw()
 
     recipe_number=0
     selected_craft_number="nothing"
+
+    good_recipes = {}
+    for i, in_rec in pairs(recipes) do
+      if type_craft == recipes[i]["type"] then
+        table.insert(good_recipes, i)
+      end
+    end  
     for y=0,1 do
       for x=0,4 do
         recipe_number=recipe_number+1
-        if type_craft == recipes[recipe_number]["type"] then
-          draw_recipe(recipe_number, 320*(x+1),320*(y+1))
-        else
+        if recipe_number<=#good_recipes then
+          draw_recipe(good_recipes[recipe_number], 320*(x+1),320*(y+1))
         end
       end
     end  
