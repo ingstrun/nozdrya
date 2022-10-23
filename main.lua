@@ -79,11 +79,13 @@ inv[8]=502
 inv[3]=500
 inv[10]=666
 inv[31]=0
+
 local mobs = {}
 mobs[1] = {x = 25, y = 5, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "cow"}
 mobs[2] = {x = 25, y = 15, max_hitpoints = 30, hitpoints = 10, bonks_left = 66, mob_type = "boss"}
 mobs[3] = {x = 25, y = 10, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "pig"}
-mobs[4] = {x = 20, y = 18, max_hitpoints = 6666, hitpoints = 6666, bonks_left = 0, mob_type = "morshu"}
+mobs[4] = {x = 20, y = 18, max_hitpoints = 4444, hitpoints = 4444, bonks_left = 0, mob_type = "morshu"}
+mobs[5] = {x_real = 1.5, y_real = 15, x = 2, y = 15, max_hitpoints = 5, hitpoints = 5, bonks_left = 15, mob_type = "arrow", dir = math.pi/-4, speed = 10, smooth = true}
 
 recipes = {}
 table.insert(recipes, {type = "craft", ins = { {'wood', 3}, {'gold_ore', 1} }, outs = { {'shield', 10}}})
@@ -253,6 +255,16 @@ function love.update(dt)
     end
   end
 
+  -- smooth mobs processed outside of tick
+  for i, arr in ipairs(mobs) do
+    if arr.smooth then
+      arr["x_real"]=arr["x_real"]+arr["speed"]*dt*math.cos(arr.dir)
+      arr["y_real"]=arr["y_real"]+arr["speed"]*dt*math.sin(arr.dir)  
+      arr.x=math.floor(arr.x_real+0.5)
+      arr.y=math.floor(arr.y_real+0.5)        
+    end
+  end
+
   if game_seconds > last_tick + 0.3 then
     -- tick
 
@@ -391,6 +403,7 @@ function love.update(dt)
 end
 
 function love.load()
+  love.graphics.setDefaultFilter( "nearest" )
   init_world()
   love.window.setTitle("Ноздря")
   -- love.window.setMode(0, 0, {fullscreen=true})
@@ -413,6 +426,7 @@ function love.load()
   sprite["armor2"] = love.graphics.newImage("armor2.png")
   rip_stone = love.graphics.newImage("tomb_cave.png")
   boss_herht = love.graphics.newImage("1_BOSS_HERHT.png")
+  sprite["arrow"] = love.graphics.newImage("arrow.png")
   sprite["boss"] = love.graphics.newImage("1_BOSS.png")
   boss_sh = love.graphics.newImage("1_BOSS_SH.png")
   boss_oof = love.graphics.newImage("1_BOSS_OOF.png")
@@ -507,6 +521,12 @@ function love.draw()
       love.graphics.draw(sprite.cow, cellsize * (mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
     elseif mob ["mob_type"] == "pig" then
       love.graphics.draw(sprite.pig, cellsize * (mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
+    elseif mob ["mob_type"] == "arrow" then
+      love.graphics.setColor(1, 0, 1, 1)
+      love.graphics.rectangle("fill", cellsize*mob.x, cellsize*mob.y, cellsize, cellsize)
+      love.graphics.setColor(1, 1, 1)
+
+      love.graphics.draw(sprite.arrow, cellsize * (mob.x_real-this_room_start_x+0.5), cellsize*(mob.y_real-this_room_start_y+0.5), mob.dir, 1,1, 16,16)
     elseif mob ["mob_type"] == "morshu" then
       if playerX<mob.x then
         flip_morshu=1
