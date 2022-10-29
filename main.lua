@@ -347,7 +347,7 @@ function love.update(dt)
         end
       end
 
-      mob_damage = { boss = 3, cow = 1, pig = 0,morshu = 0 }
+      mob_damage = { boss = 3, cow = 1, pig = 0,morshu = 0, arrow = 0 }
       damage=mob_damage[ mob["mob_type"] ]
 
       if playerY==mob.y and playerX==mob.x then
@@ -523,7 +523,7 @@ function love.draw()
       love.graphics.draw(sprite.pig, cellsize * (mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
     elseif mob ["mob_type"] == "arrow" then
       love.graphics.setColor(1, 0, 1, 1)
-      love.graphics.rectangle("fill", cellsize*mob.x, cellsize*mob.y, cellsize, cellsize)
+      --love.graphics.rectangle("fill", cellsize*mob.x, cellsize*mob.y, cellsize, cellsize)
       love.graphics.setColor(1, 1, 1)
 
       love.graphics.draw(sprite.arrow, cellsize * (mob.x_real-this_room_start_x+0.5), cellsize*(mob.y_real-this_room_start_y+0.5), mob.dir, 1,1, 16,16)
@@ -922,6 +922,11 @@ function love.keypressed( key )
   if key == "c" then
     newcow = {x = mouseX+this_room_start_x, y = mouseY+this_room_start_y,max_hitpoints = 5, hitpoints = 5, bonks_left = 15, mob_type = "cow"}
     table.insert(mobs, newcow)
+  end
+
+  if key == "space" then
+    newarrow = {x_real = playerX, y_real = playerY, x = playerX, y = playerY, max_hitpoints = 5, hitpoints = 5, bonks_left = 15, mob_type = "arrow", dir = 0, speed = 10, smooth = true}
+    table.insert(mobs, newarrow)
   end
 
   if (newX >= 0 and newX<world_w and newY >= 0 and newY<world_h) and blocks[world[newX][newY]].breakable then
