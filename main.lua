@@ -85,7 +85,7 @@ mobs[1] = {x = 25, y = 5, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob
 mobs[2] = {x = 25, y = 15, max_hitpoints = 30, hitpoints = 10, bonks_left = 66, mob_type = "boss"}
 mobs[3] = {x = 25, y = 10, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "pig"}
 mobs[4] = {x = 20, y = 18, max_hitpoints = 4444, hitpoints = 4444, bonks_left = 0, mob_type = "morshu"}
-mobs[5] = {x_real = 1.5, y_real = 15, x = 2, y = 15, max_hitpoints = 5, hitpoints = 5, bonks_left = 15, mob_type = "arrow", dir = math.pi/-4, speed = 10, smooth = true}
+mobs[5] = {x_real = 1.5, y_real = 15, x = 2, y = 15, max_hitpoints = 1111, hitpoints = 1111, bonks_left = 15, mob_type = "arrow", dir = math.pi/-4, speed = 10, smooth = true}
 
 recipes = {}
 table.insert(recipes, {type = "craft", ins = { {'wood', 3}, {'gold_ore', 1} }, outs = { {'shield', 10}}})
@@ -535,10 +535,13 @@ function love.draw()
       end    
         love.graphics.draw(sprite.morshu, cellsize * (mob.x-this_room_start_x+0.5), cellsize*(mob.y-this_room_start_y+0.5), 0, flip_morshu, 1, 48, 48)  
     end
-    love.graphics.setColor(0, 0, 0, 1)
-    love.graphics.print(mob.hitpoints,cellsize*(mob.x-this_room_start_x)-2, cellsize*(mob.y-this_room_start_y)+2)
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.print(mob.hitpoints,cellsize*(mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
+    if mob ["mob_type"] == "arrow" then 
+    else    
+      love.graphics.setColor(0, 0, 0, 1)
+      love.graphics.print(mob.hitpoints,cellsize*(mob.x-this_room_start_x)-2, cellsize*(mob.y-this_room_start_y)+2)
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.print(mob.hitpoints,cellsize*(mob.x-this_room_start_x), cellsize*(mob.y-this_room_start_y))
+    end  
   end
 
   --темнота
@@ -923,12 +926,23 @@ function love.keypressed( key )
     newcow = {x = mouseX+this_room_start_x, y = mouseY+this_room_start_y,max_hitpoints = 5, hitpoints = 5, bonks_left = 15, mob_type = "cow"}
     table.insert(mobs, newcow)
   end
+  if inv[33]==nil or inv[33]==0 then
+  else  
+    if key == "space" then
+      dx = mouseX+this_room_start_x - playerX
+      dy = mouseY+this_room_start_y - playerY
 
-  if key == "space" then
-    newarrow = {x_real = playerX, y_real = playerY, x = playerX, y = playerY, max_hitpoints = 5, hitpoints = 5, bonks_left = 15, mob_type = "arrow", dir = 0, speed = 10, smooth = true}
-    table.insert(mobs, newarrow)
+      angle = math.atan(dy/dx)
+      if dx < 0 then
+          angle = angle + math.pi
+      end
+      newarrow = {x_real = playerX, y_real = playerY, x = playerX,
+        y = playerY, max_hitpoints = 1000, hitpoints = 10000, bonks_left = 15,
+        mob_type = "arrow", dir = angle, speed = 10, smooth = true}
+      table.insert(mobs, newarrow)
+      inv[33] = inv[33]-1
+    end
   end
-
   if (newX >= 0 and newX<world_w and newY >= 0 and newY<world_h) and blocks[world[newX][newY]].breakable then
     item = world[newX][newY]
     -- FIXME check if inventory entry present
