@@ -79,6 +79,7 @@ inv[8]=502
 inv[3]=500
 inv[10]=666
 inv[31]=0
+inv[33]=10
 
 local mobs = {}
 mobs[1] = {x = 25, y = 5, max_hitpoints = 5, hitpoints = 3, bonks_left = 15, mob_type = "cow"}
@@ -261,7 +262,14 @@ function love.update(dt)
       arr["x_real"]=arr["x_real"]+arr["speed"]*dt*math.cos(arr.dir)
       arr["y_real"]=arr["y_real"]+arr["speed"]*dt*math.sin(arr.dir)  
       arr.x=math.floor(arr.x_real+0.5)
-      arr.y=math.floor(arr.y_real+0.5)        
+      arr.y=math.floor(arr.y_real+0.5)   
+      if arr["mob_type"] == "arrow" then
+        if can_walk(arr.x, arr.y) then
+        else
+          table.remove (mobs,i) 
+          world[arr.x][arr.y]=33 
+        end
+      end         
     end
   end
 
